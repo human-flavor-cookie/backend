@@ -12,8 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.lang.reflect.Member;
+import com.cookie.human_flavor_cookie.member.entity.Member;
 
 @RequiredArgsConstructor
 @Service

@@ -1,6 +1,13 @@
 spring:
   application:
     name: human-flavor-cookie
+  jpa:
+    show_sql: true
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:testdb
 jwt:
-  expiration-time: 86400000 #1?
+  expiration-time: 86400000 # 1 day in milliseconds
   secret-key: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa

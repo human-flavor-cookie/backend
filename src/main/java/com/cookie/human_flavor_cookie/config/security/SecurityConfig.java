@@ -20,8 +20,11 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/member/login", "/member/signup").permitAll()
+                        .requestMatchers("/member/login", "/member/signup", "/h2-console/**").permitAll() // H2 DB 권한 허용
                         .anyRequest().authenticated()
+                )
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin())
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
 
@@ -33,4 +36,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-

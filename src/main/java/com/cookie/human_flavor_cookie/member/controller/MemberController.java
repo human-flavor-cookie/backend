@@ -3,14 +3,13 @@ package com.cookie.human_flavor_cookie.member.controller;
 import com.cookie.human_flavor_cookie.auth.LoginUser;
 import com.cookie.human_flavor_cookie.member.dto.ReturnLoginDto;
 import com.cookie.human_flavor_cookie.member.service.MemberService;
-import com.cookie.human_flavor_cookie.member.dto.SignupDto
-import com.cookie.human_flavor_cookie.member.dto.LoginDto
+import com.cookie.human_flavor_cookie.member.dto.SignupDto;
+import com.cookie.human_flavor_cookie.member.dto.LoginDto;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.lang.reflect.Member;
+import com.cookie.human_flavor_cookie.member.entity.Member;
 
 @RestController
 @RequiredArgsConstructor
