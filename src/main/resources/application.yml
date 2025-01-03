@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: human-flavor-cookie
+jwt:
+  expiration-time: 86400000 #1?
+  secret-key: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
