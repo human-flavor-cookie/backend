@@ -8,10 +8,12 @@ import com.cookie.human_flavor_cookie.running.entity.Running;
 import com.cookie.human_flavor_cookie.running.repository.RunningRepository;
 import com.cookie.human_flavor_cookie.member.entity.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -36,11 +38,13 @@ public class RunningService {
                     .date(today)
                     .distance(distance)
                     .duration(duration)
+                    .isGoalMet(false)
                     .build();
         } else {
             // 오늘의 기록이 있으면 업데이트
             running.setDistance(running.getDistance() + distance);
             running.setDuration(running.getDuration() + duration);
+
         }
         runningRepository.save(running);
 
@@ -48,25 +52,48 @@ public class RunningService {
         member.addTotalKm(distance);
         member.addTotalTime(duration);
 
-        // 일일 목표 달성 여부 계산
-        boolean dailyTargetMet = running.getDistance() >= member.getTarget();
-
-        if (dailyTargetMet) {
-            // 목표 달성: 성공일 증가, 실패일 초기화
-            member.setSuccess(member.getSuccess() + 1);
-            member.setFail(0);
-        } else {
-            // 목표 미달성: 실패일 증가, 성공일 초기화
-            member.setFail(member.getFail() + 1);
-            member.setSuccess(0);
+        if (!running.isGoalMet() && running.getDistance() >= member.getTarget()) {
+            running.setGoalMet(true); // 목표 달성 상태 업데이트
+            member.setSuccess(member.getSuccess() + 1); // 성공 카운트 증가
+            System.out.println("Goal met! Success count incremented.");
         }
 
+        // 변경 사항 저장
+        runningRepository.save(running);
         memberRepository.save(member);
-        // 결과 반환
+
+        // DTO 생성 및 반환
         return EndRunResponseDto.builder()
                 .totalDistance(running.getDistance())
                 .totalDuration(running.getDuration())
-                .dailyTargetMet(dailyTargetMet)
+                .isGoalMet(running.isGoalMet()) // 목표 달성 여부 전달
                 .build();
+    }
+    @Transactional
+    public void handleDailyFailures(Member member) {
+        // 오늘 날짜와 어제 날짜 가져오기
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+
+        // 어제의 달린 기록 가져오기
+        Running yesterdayRunning = runningRepository.findByMemberIdAndDate(member.getId(), yesterday)
+                .orElse(null);
+
+        // 어제 목표를 달성하지 못한 경우 실패 처리
+        if (yesterdayRunning == null || !yesterdayRunning.isGoalMet()) {
+            member.setFail(member.getFail() + 1); // 실패 카운트 증가
+            System.out.println("Fail incremented for member: " + member.getEmail());
+            memberRepository.save(member);
+        }
+    }
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정 실행
+    public void evaluateDailyFailures() {
+        System.out.println("Starting daily failure evaluation...");
+        List<Member> members = memberRepository.findAll();
+
+        for (Member member : members) {
+            handleDailyFailures(member);
+        }
+        System.out.println("Daily failure evaluation completed.");
     }
 }

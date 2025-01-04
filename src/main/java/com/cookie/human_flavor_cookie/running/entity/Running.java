@@ -29,12 +29,15 @@ public class Running {
     @Column(nullable = false)
     private int duration; // 하루 동안 달린 시간 (초 단위)
 
+    @Column(nullable = false)
+    private boolean isGoalMet = false; // 오늘 목표 달성 여부
 
     @Builder
-    public Running(Long memberId, LocalDate date, float distance, int duration) {
+    public Running(Long memberId, LocalDate date, float distance, int duration, boolean isGoalMet) {
         this.memberId = memberId;
         this.date = date;
         this.distance = distance;
         this.duration = duration;
+        this.isGoalMet = isGoalMet;
     }
 }
