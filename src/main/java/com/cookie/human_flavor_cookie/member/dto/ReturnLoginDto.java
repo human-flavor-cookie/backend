@@ -13,4 +13,11 @@ public class ReturnLoginDto {
     private String token;
     private String name;
     private String email;
+    private int coin;
+    private float target;
+    private int success;
+    private int fail;
+    private float totalKm;
+    private int totalTime;
+    private long currentCookie;
 }

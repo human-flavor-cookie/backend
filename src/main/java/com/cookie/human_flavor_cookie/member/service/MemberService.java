@@ -50,7 +50,18 @@ public class MemberService {
         // JWT 토큰 생성
         String jwt = jwtTokenProvider.createToken(member.getEmail());
 
-        return new ReturnLoginDto(jwt, member.getName(), member.getEmail());
+        return new ReturnLoginDto(
+                jwt,
+                member.getName(),
+                member.getEmail(),
+                member.getCoin(),
+                member.getTarget(),
+                member.getSuccess(),
+                member.getFail(),
+                member.getTotalKm(),
+                member.getTotalTime(),
+                member.getCurrentCookie()
+        );
     }
 
     public void logout(Member member) {
