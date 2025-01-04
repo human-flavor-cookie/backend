@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
 @Entity
+@Setter
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,22 +25,22 @@ public class Member {
     private String password;
 
     @Column
-    private int coin;
+    private int coin = 0;
 
     @Column
-    private float target;
+    private float target = 3.0f;
 
     @Column
-    private int success;
+    private int success = 0;
 
     @Column
-    private int fail;
+    private int fail = 0;
 
     @Column
-    private float totalKm;
+    private float totalKm = 0.0f;
 
     @Column
-    private int totalTime;
+    private int totalTime = 0;
 
     @Column
     private long currentCookie;

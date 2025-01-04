@@ -68,5 +68,15 @@ public class MemberService {
         httpSession.removeAttribute("member");
         httpSession.invalidate();
     }
+
+    @Transactional
+    public void updateDailyTarget(Member member, float newTarget) {
+        if (newTarget <= 0) {
+            throw new IllegalArgumentException("Target must be greater than 0.");
+        }
+        member.setTarget(newTarget); // 목표 값 업데이트
+        memberRepository.save(member); // 변경 내용 저장
+    }
+
 }
 

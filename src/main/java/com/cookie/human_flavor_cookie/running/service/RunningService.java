@@ -47,11 +47,21 @@ public class RunningService {
         // Member 정보 업데이트
         member.addTotalKm(distance);
         member.addTotalTime(duration);
-        memberRepository.save(member);
 
         // 일일 목표 달성 여부 계산
         boolean dailyTargetMet = running.getDistance() >= member.getTarget();
 
+        if (dailyTargetMet) {
+            // 목표 달성: 성공일 증가, 실패일 초기화
+            member.setSuccess(member.getSuccess() + 1);
+            member.setFail(0);
+        } else {
+            // 목표 미달성: 실패일 증가, 성공일 초기화
+            member.setFail(member.getFail() + 1);
+            member.setSuccess(0);
+        }
+
+        memberRepository.save(member);
         // 결과 반환
         return EndRunResponseDto.builder()
                 .totalDistance(running.getDistance())

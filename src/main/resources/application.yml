@@ -11,3 +11,4 @@ spring:
 jwt:
   expiration-time: 86400000 # 1 day in milliseconds
   secret-key: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+

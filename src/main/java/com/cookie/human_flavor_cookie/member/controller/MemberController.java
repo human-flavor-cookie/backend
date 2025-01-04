@@ -2,6 +2,7 @@ package com.cookie.human_flavor_cookie.member.controller;
 
 import com.cookie.human_flavor_cookie.auth.LoginUser;
 import com.cookie.human_flavor_cookie.member.dto.ReturnLoginDto;
+import com.cookie.human_flavor_cookie.member.dto.UpdateTargetRequestDto;
 import com.cookie.human_flavor_cookie.member.service.MemberService;
 import com.cookie.human_flavor_cookie.member.dto.SignupDto;
 import com.cookie.human_flavor_cookie.member.dto.LoginDto;
@@ -41,5 +42,13 @@ public class MemberController {
     @GetMapping("/isLogin")
     public ResponseEntity<?> isLogin(@LoginUser Member member){
         return ResponseEntity.ok(member);
+    }
+
+    @PatchMapping("/update-target")
+    public ResponseEntity<String> updateDailyTarget(
+            @RequestBody UpdateTargetRequestDto requestDto,
+            @RequestAttribute Member member) { // 요청 속성에서 로그인된 사용자 정보 사용
+        memberService.updateDailyTarget(member, requestDto.getNewTarget());
+        return ResponseEntity.ok("Daily target updated successfully.");
     }
 }
