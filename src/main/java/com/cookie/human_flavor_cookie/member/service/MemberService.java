@@ -5,6 +5,7 @@ import com.cookie.human_flavor_cookie.cookie.entity.Cookie;
 import com.cookie.human_flavor_cookie.cookie.entity.UserCookie;
 import com.cookie.human_flavor_cookie.cookie.repository.CookieRepository;
 import com.cookie.human_flavor_cookie.cookie.repository.UserCookieRepository;
+import com.cookie.human_flavor_cookie.cookie.service.CookieService;
 import com.cookie.human_flavor_cookie.exception.CustomException;
 import com.cookie.human_flavor_cookie.exception.ErrorCode;
 import com.cookie.human_flavor_cookie.member.dto.LoginDto;
@@ -27,6 +28,7 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final CookieRepository cookieRepository;
     private final UserCookieRepository userCookieRepository;
+    private final CookieService cookieService;
     @Transactional
     public void signup(SignupDto signupDto) throws Exception {
         //이미 회원이 존재하는 경우
@@ -44,6 +46,7 @@ public class MemberService {
                 .build();
         memberRepository.save(member);
         addDefaultCookieToUser(member);
+        cookieService.initializeUserCookies(member);
     }
     private void addDefaultCookieToUser(Member member) {
         // 쿠키 엔티티(ID 1) 조회 또는 생성

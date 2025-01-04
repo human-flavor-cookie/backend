@@ -1,10 +1,7 @@
 package com.cookie.human_flavor_cookie.cookie.controller;
 
 import com.cookie.human_flavor_cookie.auth.LoginUser;
-import com.cookie.human_flavor_cookie.cookie.dto.AssignCookieRequestDto;
-import com.cookie.human_flavor_cookie.cookie.dto.ChangeCookieRequestDto;
-import com.cookie.human_flavor_cookie.cookie.dto.UpdateCookieDistanceRequestDto;
-import com.cookie.human_flavor_cookie.cookie.dto.UserCookieResponseDto;
+import com.cookie.human_flavor_cookie.cookie.dto.*;
 import com.cookie.human_flavor_cookie.cookie.entity.UserCookie;
 import com.cookie.human_flavor_cookie.cookie.service.CookieService;
 import com.cookie.human_flavor_cookie.member.entity.Member;
@@ -62,6 +59,13 @@ public class CookieController {
             @RequestBody ChangeCookieRequestDto requestDto) {
         cookieService.changeCurrentCookie(member, requestDto.getCookieId());
         return ResponseEntity.ok("Cookie changed successfully.");
+    }
+    @PostMapping("/purchase")
+    public ResponseEntity<String> purchaseCookie(
+            @LoginUser Member member,
+            @RequestBody PurchaseCookieRequestDto requestDto) {
+        cookieService.purchaseCookie(member, requestDto.getCookieId());
+        return ResponseEntity.ok("Cookie purchased successfully.");
     }
 
 }

@@ -65,4 +65,57 @@ public class CookieService {
                     throw new RuntimeException("User does not own the specified cookie.");
                 });
     }
+    @Transactional
+    public void initializeUserCookies(Member user) {
+        List<Cookie> cookies = cookieRepository.findAll();
+        for (Cookie cookie : cookies) {
+            // UserCookie가 이미 존재하면 건너뜀
+            if (userCookieRepository.findByUserIdAndCookieId(user.getId(), cookie.getCookieId()).isPresent()) {
+                continue;
+            }
+
+            // UserCookie 생성
+            UserCookie userCookie = new UserCookie();
+            userCookie.setUser(user);
+            userCookie.setCookie(cookie);
+            userCookie.setOwned(false); // 초기값: 보유하지 않음
+            userCookie.setPurchasable(false); // 초기값: 구매 불가
+            userCookie.setAccumulatedDistance(0.0f);
+            userCookieRepository.save(userCookie);
+        }
+    }
+    @Transactional
+    public void purchaseCookie(Member user, Long cookieId) {
+        UserCookie userCookie = userCookieRepository.findByUserIdAndCookieId(user.getId(), cookieId)
+                .orElseThrow(() -> new RuntimeException("Cookie not found for user."));
+
+        if (!userCookie.isPurchasable()) {
+            throw new RuntimeException("This cookie is not available for purchase.");
+        }
+
+        // 쿠키 구매 처리
+        userCookie.setOwned(true);
+        userCookie.setPurchasable(false); // 구매 후 더 이상 구매 불가
+        userCookieRepository.save(userCookie);
+    }
+    @Transactional
+    public void updatePurchasableCookies(Member user) {
+        List<UserCookie> userCookies = userCookieRepository.findAllByUserId(user.getId());
+        for (UserCookie userCookie : userCookies) {
+            Cookie cookie = userCookie.getCookie();
+
+            // 구매 조건 1: 누적 거리 기준
+            if (userCookie.getAccumulatedDistance() >= 100.0f) {
+                userCookie.setPurchasable(true);
+            }
+
+            // 구매 조건 2: 연속 목표 달성 기준
+            if (user.getSuccess() >= 7) { // 7일 연속 성공
+                userCookie.setPurchasable(true);
+            }
+
+            userCookieRepository.save(userCookie);
+        }
+    }
+
 }
