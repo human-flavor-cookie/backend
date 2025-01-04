@@ -32,7 +32,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             JwtAuthentication authentication = new JwtAuthentication(email);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+        else {
+            System.err.println("JWT validation failed or token is missing");
+        }
 
+        System.out.println("Extracted token: " + token);
         filterChain.doFilter(request, response);
     }
 

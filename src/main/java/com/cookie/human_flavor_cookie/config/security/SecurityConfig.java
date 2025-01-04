@@ -14,19 +14,22 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        System.out.println("JwtAuthenticationFilter is processing the request");
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/member/login", "/member/signup", "/h2-console/**").permitAll() // H2 DB 권한 허용
-                        .anyRequest().authenticated()
+                        .requestMatchers("/member/login", "/member/signup", "/h2-console/**").permitAll() // 인증 없이 접근 가능
+                        .requestMatchers("/error").permitAll()
+                        .anyRequest().authenticated()// JWT 인증 필요
                 )
+
                 .headers(headers -> headers
                         .frameOptions(frame -> frame.sameOrigin())
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);// JWT 필터 추가
+
 
         return http.build();
     }

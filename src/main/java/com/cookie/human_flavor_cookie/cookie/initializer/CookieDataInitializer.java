@@ -17,11 +17,11 @@ public class CookieDataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (cookieRepository.count() == 0) { // 중복 데이터 방지
-            cookieRepository.save(new Cookie("ChocoChip"));
-            cookieRepository.save(new Cookie("Vanilla"));
-            cookieRepository.save(new Cookie("Strawberry"));
-            cookieRepository.save(new Cookie("MintChoco"));
-            cookieRepository.save(new Cookie("Oatmeal"));
+            cookieRepository.save(new Cookie("Brave"));
+            cookieRepository.save(new Cookie("Zombie"));
+            cookieRepository.save(new Cookie("Happy"));
+            cookieRepository.save(new Cookie("Angel"));
+            cookieRepository.save(new Cookie("ButterCream"));
 
             System.out.println("Initial cookie data added to the database.");
         } else {

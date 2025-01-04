@@ -17,7 +17,6 @@ public class JwtTokenProvider {
     // JWT 토큰 생성
     public String createToken(String email) {
         Claims claims = Jwts.claims().setSubject(email);
-
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 

@@ -1,5 +1,6 @@
 package com.cookie.human_flavor_cookie.cookie.service;
 
+import com.cookie.human_flavor_cookie.auth.LoginUser;
 import com.cookie.human_flavor_cookie.cookie.entity.Cookie;
 import com.cookie.human_flavor_cookie.cookie.entity.UserCookie;
 import com.cookie.human_flavor_cookie.cookie.repository.CookieRepository;
@@ -19,6 +20,7 @@ public class CookieService {
 
     @Transactional
     public void assignCookieToUser(Member user, Long cookieId) {
+
         Cookie cookie = cookieRepository.findById(cookieId)
                 .orElseThrow(() -> new RuntimeException("Cookie not found"));
 

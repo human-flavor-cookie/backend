@@ -18,12 +18,14 @@ import java.util.List;
 @RequestMapping("/api/cookie")
 public class CookieController {
     private final CookieService cookieService;
-
     @PostMapping("/assign")
     public ResponseEntity<String> assignCookieToUser(
-            @RequestBody AssignCookieRequestDto requestDto,
-            @LoginUser Member member) {
+            @LoginUser Member member,
+            @RequestBody AssignCookieRequestDto requestDto
+            ) {
+        System.out.println("Checkpoint");
         cookieService.assignCookieToUser(member, requestDto.getCookieId());
+        System.out.println("Received cookieId: " + requestDto.getCookieId());
         return ResponseEntity.ok("Cookie assigned successfully");
     }
 
