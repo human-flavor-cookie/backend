@@ -6,6 +6,7 @@ import com.cookie.human_flavor_cookie.cookie.entity.UserCookie;
 import com.cookie.human_flavor_cookie.cookie.repository.CookieRepository;
 import com.cookie.human_flavor_cookie.cookie.repository.UserCookieRepository;
 import com.cookie.human_flavor_cookie.member.entity.Member;
+import com.cookie.human_flavor_cookie.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +18,7 @@ import java.util.List;
 public class CookieService {
     private final CookieRepository cookieRepository;
     private final UserCookieRepository userCookieRepository;
-
+    private final MemberRepository memberRepository;
     @Transactional
     public void assignCookieToUser(Member user, Long cookieId) {
 
@@ -46,6 +47,18 @@ public class CookieService {
         }
         userCookie.setAccumulatedDistance(userCookie.getAccumulatedDistance() + distance);
         userCookieRepository.save(userCookie);
+    }
+
+    @Transactional
+    public void changeCurrentCookie(Member user, Long cookieId) {
+        // 사용자가 보유한 쿠키인지 확인
+        UserCookie userCookie = userCookieRepository.findByUserIdAndCookieId(user.getId(), cookieId);
+        if (userCookie == null || !userCookie.isOwned()) {
+            throw new RuntimeException("User does not own the specified cookie.");
+        }
+        // Member의 currentCookie 업데이트
+        user.setCurrentCookie(cookieId);
+        memberRepository.save(user);
     }
 }
 

@@ -3,10 +3,12 @@ package com.cookie.human_flavor_cookie.cookie.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
 @Entity
+@Setter
 public class Cookie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

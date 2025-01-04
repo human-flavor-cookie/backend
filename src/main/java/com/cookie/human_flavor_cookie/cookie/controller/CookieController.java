@@ -2,6 +2,7 @@ package com.cookie.human_flavor_cookie.cookie.controller;
 
 import com.cookie.human_flavor_cookie.auth.LoginUser;
 import com.cookie.human_flavor_cookie.cookie.dto.AssignCookieRequestDto;
+import com.cookie.human_flavor_cookie.cookie.dto.ChangeCookieRequestDto;
 import com.cookie.human_flavor_cookie.cookie.dto.UpdateCookieDistanceRequestDto;
 import com.cookie.human_flavor_cookie.cookie.dto.UserCookieResponseDto;
 import com.cookie.human_flavor_cookie.cookie.entity.UserCookie;
@@ -54,6 +55,13 @@ public class CookieController {
             @LoginUser Member member) {
         cookieService.updateCookieDistance(member.getId(), requestDto.getCookieId(), requestDto.getDistance());
         return ResponseEntity.ok("Cookie distance updated successfully");
+    }
+    @PatchMapping("/change")
+    public ResponseEntity<String> changeCurrentCookie(
+            @LoginUser Member member,
+            @RequestBody ChangeCookieRequestDto requestDto) {
+        cookieService.changeCurrentCookie(member, requestDto.getCookieId());
+        return ResponseEntity.ok("Cookie changed successfully.");
     }
 
 }

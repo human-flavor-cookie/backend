@@ -43,7 +43,7 @@ public class Member {
     private int totalTime = 0;
 
     @Column
-    private long currentCookie;
+    private long currentCookie = 0;
 
     @Builder
     public Member(String name, String email, String password, int coin, float target,
