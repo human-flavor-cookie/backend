@@ -19,9 +19,9 @@ public class CookieService {
     private final CookieRepository cookieRepository;
     private final UserCookieRepository userCookieRepository;
     private final MemberRepository memberRepository;
+
     @Transactional
     public void assignCookieToUser(Member user, Long cookieId) {
-
         Cookie cookie = cookieRepository.findById(cookieId)
                 .orElseThrow(() -> new RuntimeException("Cookie not found"));
 
@@ -41,24 +41,28 @@ public class CookieService {
 
     @Transactional
     public void updateCookieDistance(Long userId, Long cookieId, float distance) {
-        UserCookie userCookie = userCookieRepository.findByUserIdAndCookieId(userId, cookieId);
-        if (userCookie == null) {
-            throw new RuntimeException("User does not own this cookie");
-        }
-        userCookie.setAccumulatedDistance(userCookie.getAccumulatedDistance() + distance);
-        userCookieRepository.save(userCookie);
+        userCookieRepository.findByUserIdAndCookieId(userId, cookieId)
+                .ifPresentOrElse(userCookie -> {
+                    userCookie.setAccumulatedDistance(userCookie.getAccumulatedDistance() + distance);
+                    userCookieRepository.save(userCookie);
+                }, () -> {
+                    throw new RuntimeException("User does not own this cookie");
+                });
     }
 
     @Transactional
     public void changeCurrentCookie(Member user, Long cookieId) {
         // 사용자가 보유한 쿠키인지 확인
-        UserCookie userCookie = userCookieRepository.findByUserIdAndCookieId(user.getId(), cookieId);
-        if (userCookie == null || !userCookie.isOwned()) {
-            throw new RuntimeException("User does not own the specified cookie.");
-        }
-        // Member의 currentCookie 업데이트
-        user.setCurrentCookie(cookieId);
-        memberRepository.save(user);
+        userCookieRepository.findByUserIdAndCookieId(user.getId(), cookieId)
+                .ifPresentOrElse(userCookie -> {
+                    if (!userCookie.isOwned()) {
+                        throw new RuntimeException("User does not own the specified cookie.");
+                    }
+                    // Member의 currentCookie 업데이트
+                    user.setCurrentCookie(cookieId);
+                    memberRepository.save(user);
+                }, () -> {
+                    throw new RuntimeException("User does not own the specified cookie.");
+                });
     }
 }
-

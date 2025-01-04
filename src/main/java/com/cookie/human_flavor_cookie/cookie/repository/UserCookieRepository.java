@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserCookieRepository extends JpaRepository<UserCookie, Long> {
 
@@ -13,5 +14,6 @@ public interface UserCookieRepository extends JpaRepository<UserCookie, Long> {
     List<UserCookie> findAllByUserId(@Param("userId") Long userId);
 
     @Query("SELECT uc FROM UserCookie uc WHERE uc.user.id = :userId AND uc.cookie.cookieId = :cookieId")
-    UserCookie findByUserIdAndCookieId(@Param("userId") Long userId, @Param("cookieId") Long cookieId);
+    Optional<UserCookie> findByUserIdAndCookieId(@Param("userId") Long userId, @Param("cookieId") Long cookieId);
+
 }

@@ -1,5 +1,6 @@
 package com.cookie.human_flavor_cookie.running.service;
 
+import com.cookie.human_flavor_cookie.cookie.repository.UserCookieRepository;
 import com.cookie.human_flavor_cookie.exception.CustomException;
 import com.cookie.human_flavor_cookie.exception.ErrorCode;
 import com.cookie.human_flavor_cookie.member.repository.MemberRepository;
@@ -20,7 +21,7 @@ import java.util.List;
 public class RunningService {
     private final MemberRepository memberRepository;
     private final RunningRepository runningRepository;
-
+    private final UserCookieRepository userCookieRepository;
     @Transactional
     public EndRunResponseDto endRun(Member member, float distance, int duration) {
 
@@ -61,6 +62,16 @@ public class RunningService {
         // 변경 사항 저장
         runningRepository.save(running);
         memberRepository.save(member);
+        Long currentCookieId = member.getCurrentCookie();
+
+        if (currentCookieId != null) {
+            userCookieRepository.findByUserIdAndCookieId(member.getId(), currentCookieId)
+                    .ifPresent(userCookie -> {
+                        userCookie.setAccumulatedDistance(userCookie.getAccumulatedDistance() + distance);
+                        userCookieRepository.save(userCookie);
+                        System.out.println("Updated distance for cookie ID " + currentCookieId + ": " + userCookie.getAccumulatedDistance());
+                    });
+        }
 
         // DTO 생성 및 반환
         return EndRunResponseDto.builder()
