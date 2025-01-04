@@ -1,9 +1,6 @@
 package com.cookie.human_flavor_cookie.auth.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +31,16 @@ public class JwtTokenProvider {
 
     // JWT 토큰에서 이메일 추출
     public String getEmail(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        try {
+            return Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (JwtException | IllegalArgumentException e) {
+            System.err.println("Failed to parse JWT token: " + e.getMessage());
+            throw new IllegalArgumentException("Invalid JWT token");
+        }
     }
 
     // 토큰 유효성 및 만료일 확인
@@ -42,8 +48,13 @@ public class JwtTokenProvider {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            System.err.println("JWT token has expired");
+            return false;
         } catch (JwtException | IllegalArgumentException e) {
+            System.err.println("Invalid JWT token: " + e.getMessage());
             return false;
         }
     }
+
 }

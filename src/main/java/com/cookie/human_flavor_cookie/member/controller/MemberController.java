@@ -44,10 +44,10 @@ public class MemberController {
         return ResponseEntity.ok(member);
     }
 
-    @PatchMapping("/update-target")
+    @PostMapping("/update-target")
     public ResponseEntity<String> updateDailyTarget(
             @RequestBody UpdateTargetRequestDto requestDto,
-            @RequestAttribute Member member) { // 요청 속성에서 로그인된 사용자 정보 사용
+            @LoginUser Member member) { // 요청 속성에서 로그인된 사용자 정보 사용
         memberService.updateDailyTarget(member, requestDto.getNewTarget());
         return ResponseEntity.ok("Daily target updated successfully.");
     }

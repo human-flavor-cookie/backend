@@ -1,5 +1,6 @@
 package com.cookie.human_flavor_cookie.cookie.controller;
 
+import com.cookie.human_flavor_cookie.auth.LoginUser;
 import com.cookie.human_flavor_cookie.cookie.dto.AssignCookieRequestDto;
 import com.cookie.human_flavor_cookie.cookie.dto.UpdateCookieDistanceRequestDto;
 import com.cookie.human_flavor_cookie.cookie.dto.UserCookieResponseDto;
@@ -21,14 +22,14 @@ public class CookieController {
     @PostMapping("/assign")
     public ResponseEntity<String> assignCookieToUser(
             @RequestBody AssignCookieRequestDto requestDto,
-            @RequestAttribute Member member) {
+            @LoginUser Member member) {
         cookieService.assignCookieToUser(member, requestDto.getCookieId());
         return ResponseEntity.ok("Cookie assigned successfully");
     }
 
 
     @GetMapping("/list")
-    public ResponseEntity<List<UserCookieResponseDto>> getCookiesForUser(@RequestAttribute Member member) {
+    public ResponseEntity<List<UserCookieResponseDto>> getCookiesForUser(@LoginUser Member member) {
         List<UserCookie> userCookies = cookieService.getCookiesForUser(member.getId());
 
         // 엔티티를 DTO로 변환
@@ -48,7 +49,7 @@ public class CookieController {
     @PatchMapping("/update-distance")
     public ResponseEntity<String> updateCookieDistance(
             @RequestBody UpdateCookieDistanceRequestDto requestDto,
-            @RequestAttribute Member member) {
+            @LoginUser Member member) {
         cookieService.updateCookieDistance(member.getId(), requestDto.getCookieId(), requestDto.getDistance());
         return ResponseEntity.ok("Cookie distance updated successfully");
     }

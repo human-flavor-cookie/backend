@@ -41,8 +41,10 @@ public class MemberService {
 
     @Transactional
     public ReturnLoginDto login(LoginDto loginDto) throws Exception {
+
         Member member = memberRepository.findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.NO_MEMBER));
+
         if (!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_INCORRECT);
         }

@@ -1,5 +1,6 @@
 package com.cookie.human_flavor_cookie.running.controller;
 
+import com.cookie.human_flavor_cookie.auth.LoginUser;
 import com.cookie.human_flavor_cookie.running.dto.EndRunRequestDto;
 import com.cookie.human_flavor_cookie.running.dto.EndRunResponseDto;
 import com.cookie.human_flavor_cookie.running.service.RunningService;
@@ -17,7 +18,7 @@ public class RunningController {
     @PostMapping("/end")
     public ResponseEntity<EndRunResponseDto> endRun(
             @RequestBody EndRunRequestDto requestDto,
-            @RequestAttribute Member member) {
+            @LoginUser Member member) {
         EndRunResponseDto responseDto = runningService.endRun(
                 member,
                 requestDto.getDistance(),

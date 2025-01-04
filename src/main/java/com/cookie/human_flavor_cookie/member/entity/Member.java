@@ -28,7 +28,7 @@ public class Member {
     private int coin = 0;
 
     @Column
-    private float target = 3.0f;
+    private float target = 0.0f;
 
     @Column
     private int success = 0;

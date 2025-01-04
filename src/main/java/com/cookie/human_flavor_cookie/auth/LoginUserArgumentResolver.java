@@ -13,7 +13,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import java.lang.reflect.Member;
+import com.cookie.human_flavor_cookie.member.entity.Member; // JPA 엔티티 클래스
+
 
 @RequiredArgsConstructor
 @Component
@@ -45,6 +46,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 
         // 토큰에서 이메일 추출
         String email = jwtTokenProvider.getEmail(token);
+        System.out.println("Extracted email: " + email);
 
         // 이메일로 사용자 조회
         return memberRepository.findByEmail(email)

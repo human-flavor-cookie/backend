@@ -31,11 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // SecurityContext에 인증 객체 저장
             JwtAuthentication authentication = new JwtAuthentication(email);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            // Member 객체를 조회하여 요청 속성에 추가
-            Member member = memberRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
-            request.setAttribute("member", member);
         }
 
         filterChain.doFilter(request, response);
