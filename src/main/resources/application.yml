@@ -1,3 +1,7 @@
+kakao:
+  client-id: d62510b4cb8521d2b86ecc08d58569c7
+  redirect-uri: http://localhost:8080/oauth/kakao/callback
+
 spring:
   application:
     name: human-flavor-cookie
@@ -8,6 +12,23 @@ spring:
       enabled: true
   datasource:
     url: jdbc:h2:mem:testdb
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${kakao.client-id}
+            client-secret: ""
+            redirect-uri: "{baseUrl}/oauth/kakao/callback"
+            authorization-grant-type: authorization_code
+            scope: account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
 jwt:
   expiration-time: 86400000 # 1 day in milliseconds
   secret-key: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
