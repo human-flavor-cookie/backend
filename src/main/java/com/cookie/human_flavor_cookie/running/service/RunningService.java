@@ -1,6 +1,7 @@
 package com.cookie.human_flavor_cookie.running.service;
 
 import com.cookie.human_flavor_cookie.cookie.repository.UserCookieRepository;
+import com.cookie.human_flavor_cookie.cookie.service.CookieService;
 import com.cookie.human_flavor_cookie.exception.CustomException;
 import com.cookie.human_flavor_cookie.exception.ErrorCode;
 import com.cookie.human_flavor_cookie.member.repository.MemberRepository;
@@ -22,6 +23,7 @@ public class RunningService {
     private final MemberRepository memberRepository;
     private final RunningRepository runningRepository;
     private final UserCookieRepository userCookieRepository;
+    private final CookieService cookieService;
     @Transactional
     public EndRunResponseDto endRun(Member member, float distance, int duration) {
 
@@ -47,9 +49,16 @@ public class RunningService {
             running.setDuration(running.getDuration() + duration);
 
         }
+
+        int coinsEarned = (int) (distance * 10000);
+        if (!running.isGoalMet() && running.getDistance() >= member.getTarget()) {
+            // 추가 코인 계산
+            coinsEarned += (int) (member.getTarget() * 5000); // 1km당 5000코인
+        }
         runningRepository.save(running);
 
         // Member 정보 업데이트
+        member.addCoin(coinsEarned);
         member.addTotalKm(distance);
         member.addTotalTime(duration);
 
@@ -72,12 +81,15 @@ public class RunningService {
                         System.out.println("Updated distance for cookie ID " + currentCookieId + ": " + userCookie.getAccumulatedDistance());
                     });
         }
+        // 구매 가능 쿠키 상태 업데이트
+        cookieService.updatePurchasableCookies(member);
 
         // DTO 생성 및 반환
         return EndRunResponseDto.builder()
                 .totalDistance(running.getDistance())
                 .totalDuration(running.getDuration())
                 .isGoalMet(running.isGoalMet()) // 목표 달성 여부 전달
+                .coinsEarned(coinsEarned)
                 .build();
     }
     @Transactional

@@ -18,7 +18,7 @@ public class Member {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column
@@ -84,6 +84,9 @@ public class Member {
         if (target > 0) {
             this.target = target;
         }
+    }
+    public void addCoin(int coins) {
+        this.coin += coins;
     }
 
 }

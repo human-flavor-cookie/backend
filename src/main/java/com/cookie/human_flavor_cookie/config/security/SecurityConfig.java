@@ -20,7 +20,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/member/login", "/member/signup", "/h2-console/**").permitAll() // 인증 없이 접근 가능
+                        .requestMatchers("/member/login", "/member/signup", "/h2-console/**", "/member/check-email").permitAll() // 인증 없이 접근 가능
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()// JWT 인증 필요
                 )

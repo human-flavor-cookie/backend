@@ -1,10 +1,7 @@
 package com.cookie.human_flavor_cookie.cookie.controller;
 
 import com.cookie.human_flavor_cookie.auth.LoginUser;
-import com.cookie.human_flavor_cookie.cookie.dto.AssignCookieRequestDto;
-import com.cookie.human_flavor_cookie.cookie.dto.ChangeCookieRequestDto;
-import com.cookie.human_flavor_cookie.cookie.dto.UpdateCookieDistanceRequestDto;
-import com.cookie.human_flavor_cookie.cookie.dto.UserCookieResponseDto;
+import com.cookie.human_flavor_cookie.cookie.dto.*;
 import com.cookie.human_flavor_cookie.cookie.entity.UserCookie;
 import com.cookie.human_flavor_cookie.cookie.service.CookieService;
 import com.cookie.human_flavor_cookie.member.entity.Member;
@@ -29,26 +26,12 @@ public class CookieController {
         System.out.println("Received cookieId: " + requestDto.getCookieId());
         return ResponseEntity.ok("Cookie assigned successfully");
     }
-
-
     @GetMapping("/list")
-    public ResponseEntity<List<UserCookieResponseDto>> getCookiesForUser(@LoginUser Member member) {
-        List<UserCookie> userCookies = cookieService.getCookiesForUser(member.getId());
-
-        // 엔티티를 DTO로 변환
-        List<UserCookieResponseDto> responseDtos = userCookies.stream()
-                .map(userCookie -> UserCookieResponseDto.builder()
-                        .cookieId(userCookie.getCookie().getCookieId())
-                        .cookieName(userCookie.getCookie().getCookieName())
-                        .isOwned(userCookie.isOwned())
-                        .accumulatedDistance(userCookie.getAccumulatedDistance())
-                        .build())
-                .toList();
-
-        return ResponseEntity.ok(responseDtos);
+    public ResponseEntity<List<UserCookieResponseDto>> getUserCookies(@LoginUser Member member) {
+        // 서비스 호출
+        List<UserCookieResponseDto> cookies = cookieService.getUserCookies(member);
+        return ResponseEntity.ok(cookies);
     }
-
-
     @PatchMapping("/update-distance")
     public ResponseEntity<String> updateCookieDistance(
             @RequestBody UpdateCookieDistanceRequestDto requestDto,
@@ -62,6 +45,13 @@ public class CookieController {
             @RequestBody ChangeCookieRequestDto requestDto) {
         cookieService.changeCurrentCookie(member, requestDto.getCookieId());
         return ResponseEntity.ok("Cookie changed successfully.");
+    }
+    @PostMapping("/purchase")
+    public ResponseEntity<String> purchaseCookie(
+            @LoginUser Member member,
+            @RequestBody PurchaseCookieRequestDto requestDto) {
+        cookieService.purchaseCookie(member, requestDto.getCookieId());
+        return ResponseEntity.ok("Cookie purchased successfully.");
     }
 
 }

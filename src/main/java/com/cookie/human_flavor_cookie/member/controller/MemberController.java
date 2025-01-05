@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import com.cookie.human_flavor_cookie.member.entity.Member;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -58,5 +59,30 @@ public class MemberController {
     public ResponseEntity<?> loginMember(@LoginUser Member member){
         MainPageDto dto = memberService.getMainPage(member);
         return ResponseEntity.ok(dto);
+    }
+    @GetMapping("/check-email")
+    public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestParam String email) {
+        boolean isAvailable = memberService.isEmailAvailable(email);
+        return ResponseEntity.ok(Map.of("isAvailable", isAvailable));
+    }
+    @GetMapping("/profile")
+    public ResponseEntity<UserProfileResponseDto> getUserProfile(@LoginUser Member member) {
+        UserProfileResponseDto userProfile = memberService.getUserProfile(member);
+        return ResponseEntity.ok(userProfile);
+    }
+    @GetMapping("/ranking")
+    public ResponseEntity<Map<String, Object>> getRanking(@LoginUser Member member) {
+        List<RankingResponseDto> ranking = memberService.getRanking(member);
+
+        // 상위 3명 및 내 랭킹 정보
+        Map<String, Object> response = new HashMap<>();
+        response.put("top3", ranking.stream().limit(3).toList()); // 상위 3명
+        response.put("userRank", ranking.stream()
+                .filter(r -> r.getUserName().equals(member.getName()))
+                .findFirst()
+                .orElse(null)); // 현재 유저의 랭킹 정보
+        response.put("allRanks", ranking); // 전체 랭킹
+
+        return ResponseEntity.ok(response);
     }
 }
