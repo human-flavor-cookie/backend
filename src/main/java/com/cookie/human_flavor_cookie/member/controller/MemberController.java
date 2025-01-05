@@ -24,7 +24,9 @@ public class MemberController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupDto signupDto) throws Exception {
         memberService.signup(signupDto);
-        return ResponseEntity.ok("회원가입 성공");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "회원가입 성공");
+        return ResponseEntity.ok(response);
     }
 
     //자체 로그인
@@ -52,6 +54,11 @@ public class MemberController {
         memberService.updateDailyTarget(member, requestDto.getNewTarget());
         return ResponseEntity.ok("Daily target updated successfully.");
     }
+
+    @GetMapping("/main-page")
+    public ResponseEntity<?> loginMember(@LoginUser Member member){
+        MainPageDto dto = memberService.getMainPage(member);
+        return ResponseEntity.ok(dto);
     @GetMapping("/check-email")
     public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestParam String email) {
         boolean isAvailable = memberService.isEmailAvailable(email);

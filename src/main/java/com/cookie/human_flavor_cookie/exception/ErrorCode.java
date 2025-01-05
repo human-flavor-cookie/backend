@@ -4,10 +4,10 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
     // 회원 관련
-    EMAIL_ALREADY_EXISTS("이미 존재하는 이메일입니다.", HttpStatus.CONFLICT),
-    PASSWORD_INCORRECT("비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED),
-    NO_MEMBER("존재하는 회원이 없습니다.", HttpStatus.BAD_REQUEST),
-    UNAUTHORIZED("로그인이 필요합니다.", HttpStatus.UNAUTHORIZED);
+    EMAIL_ALREADY_EXISTS("ALREADY EXIST.", HttpStatus.CONFLICT),
+    PASSWORD_INCORRECT("PASSWORD INCORRECT.", HttpStatus.UNAUTHORIZED),
+    NO_MEMBER("NO EXIST MEMBER.", HttpStatus.BAD_REQUEST),
+    UNAUTHORIZED("NEED LOGIN", HttpStatus.UNAUTHORIZED);
 
     private final String message;
     private final HttpStatus status;

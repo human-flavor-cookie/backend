@@ -8,6 +8,10 @@ import com.cookie.human_flavor_cookie.cookie.repository.UserCookieRepository;
 import com.cookie.human_flavor_cookie.cookie.service.CookieService;
 import com.cookie.human_flavor_cookie.exception.CustomException;
 import com.cookie.human_flavor_cookie.exception.ErrorCode;
+import com.cookie.human_flavor_cookie.member.dto.LoginDto;
+import com.cookie.human_flavor_cookie.member.dto.MainPageDto;
+import com.cookie.human_flavor_cookie.member.dto.ReturnLoginDto;
+import com.cookie.human_flavor_cookie.member.dto.SignupDto;
 import com.cookie.human_flavor_cookie.member.dto.*;
 import com.cookie.human_flavor_cookie.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpSession;
@@ -147,6 +151,9 @@ public class MemberService {
             String currentCookieName = "";
             Long currentCookieId = member.getCurrentCookie(); // Long으로 선언
 
+    @Transactional(readOnly = true)
+    public MainPageDto getMainPage(Member member) {
+        return new MainPageDto(member.getName(), member.getCoin());
             if (currentCookieId != null) { // null 체크
                 currentCookieName = cookieRepository.findById(currentCookieId)
                         .map(Cookie::getCookieName)
