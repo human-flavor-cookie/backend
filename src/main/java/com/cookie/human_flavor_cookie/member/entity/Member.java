@@ -85,5 +85,8 @@ public class Member {
             this.target = target;
         }
     }
+    public void addCoin(int coins) {
+        this.coin += coins;
+    }
 
 }

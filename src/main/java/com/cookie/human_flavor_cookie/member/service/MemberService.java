@@ -46,25 +46,7 @@ public class MemberService {
                 .currentCookie(1L)
                 .build();
         memberRepository.save(member);
-        addDefaultCookieToUser(member);
         cookieService.initializeUserCookies(member);
-    }
-    private void addDefaultCookieToUser(Member member) {
-        // 쿠키 엔티티(ID 1) 조회 또는 생성
-        Cookie defaultCookie = cookieRepository.findById(1L).orElseGet(() -> {
-            Cookie cookie = new Cookie();
-            cookie.setCookieId(1L);
-            cookie.setCookieName("Default Cookie");
-            return cookieRepository.save(cookie);
-        });
-
-        // 사용자에게 ID 1 쿠키 추가
-        UserCookie userCookie = new UserCookie();
-        userCookie.setUser(member);
-        userCookie.setCookie(defaultCookie);
-        userCookie.setOwned(true);
-        userCookie.setAccumulatedDistance(0.0f);
-        userCookieRepository.save(userCookie);
     }
     @Transactional
     public ReturnLoginDto login(LoginDto loginDto) throws Exception {

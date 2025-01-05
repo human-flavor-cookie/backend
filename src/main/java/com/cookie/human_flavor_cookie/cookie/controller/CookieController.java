@@ -26,16 +26,12 @@ public class CookieController {
         System.out.println("Received cookieId: " + requestDto.getCookieId());
         return ResponseEntity.ok("Cookie assigned successfully");
     }
-
-
     @GetMapping("/list")
     public ResponseEntity<List<UserCookieResponseDto>> getUserCookies(@LoginUser Member member) {
         // 서비스 호출
         List<UserCookieResponseDto> cookies = cookieService.getUserCookies(member);
         return ResponseEntity.ok(cookies);
     }
-
-
     @PatchMapping("/update-distance")
     public ResponseEntity<String> updateCookieDistance(
             @RequestBody UpdateCookieDistanceRequestDto requestDto,
@@ -43,7 +39,6 @@ public class CookieController {
         cookieService.updateCookieDistance(member.getId(), requestDto.getCookieId(), requestDto.getDistance());
         return ResponseEntity.ok("Cookie distance updated successfully");
     }
-
     @PatchMapping("/change")
     public ResponseEntity<String> changeCurrentCookie(
             @LoginUser Member member,
