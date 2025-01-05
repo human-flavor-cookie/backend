@@ -18,9 +18,12 @@ public class Cookie {
     @Column(nullable = false, unique = true)
     private String cookieName; // 쿠키 이름
 
-    // 이름을 설정하는 생성자 추가
-    public Cookie(String cookieName) {
+    @Column(nullable = false)
+    private int price;
+
+    public Cookie(String cookieName, int price) {
         this.cookieName = cookieName;
+        this.price = price;
     }
 }
 

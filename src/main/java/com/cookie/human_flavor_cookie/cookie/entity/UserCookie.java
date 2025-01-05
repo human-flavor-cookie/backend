@@ -27,6 +27,9 @@ public class UserCookie {
     private boolean isOwned;
 
     @Column(nullable = false)
+    private boolean isPurchasable;
+
+    @Column(nullable = false)
     private float accumulatedDistance = 0.0f;
 }
 
