@@ -1,16 +1,17 @@
 package com.cookie.human_flavor_cookie.member.controller;
 
 import com.cookie.human_flavor_cookie.auth.LoginUser;
-import com.cookie.human_flavor_cookie.member.dto.ReturnLoginDto;
-import com.cookie.human_flavor_cookie.member.dto.UpdateTargetRequestDto;
+import com.cookie.human_flavor_cookie.member.dto.*;
 import com.cookie.human_flavor_cookie.member.service.MemberService;
-import com.cookie.human_flavor_cookie.member.dto.SignupDto;
-import com.cookie.human_flavor_cookie.member.dto.LoginDto;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.cookie.human_flavor_cookie.member.entity.Member;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,5 +51,30 @@ public class MemberController {
             @LoginUser Member member) { // 요청 속성에서 로그인된 사용자 정보 사용
         memberService.updateDailyTarget(member, requestDto.getNewTarget());
         return ResponseEntity.ok("Daily target updated successfully.");
+    }
+    @GetMapping("/check-email")
+    public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestParam String email) {
+        boolean isAvailable = memberService.isEmailAvailable(email);
+        return ResponseEntity.ok(Map.of("isAvailable", isAvailable));
+    }
+    @GetMapping("/profile")
+    public ResponseEntity<UserProfileResponseDto> getUserProfile(@LoginUser Member member) {
+        UserProfileResponseDto userProfile = memberService.getUserProfile(member);
+        return ResponseEntity.ok(userProfile);
+    }
+    @GetMapping("/ranking")
+    public ResponseEntity<Map<String, Object>> getRanking(@LoginUser Member member) {
+        List<RankingResponseDto> ranking = memberService.getRanking(member);
+
+        // 상위 3명 및 내 랭킹 정보
+        Map<String, Object> response = new HashMap<>();
+        response.put("top3", ranking.stream().limit(3).toList()); // 상위 3명
+        response.put("userRank", ranking.stream()
+                .filter(r -> r.getUserName().equals(member.getName()))
+                .findFirst()
+                .orElse(null)); // 현재 유저의 랭킹 정보
+        response.put("allRanks", ranking); // 전체 랭킹
+
+        return ResponseEntity.ok(response);
     }
 }

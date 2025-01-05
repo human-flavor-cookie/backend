@@ -1,6 +1,7 @@
 package com.cookie.human_flavor_cookie.cookie.service;
 
 import com.cookie.human_flavor_cookie.auth.LoginUser;
+import com.cookie.human_flavor_cookie.cookie.dto.UserCookieResponseDto;
 import com.cookie.human_flavor_cookie.cookie.entity.Cookie;
 import com.cookie.human_flavor_cookie.cookie.entity.UserCookie;
 import com.cookie.human_flavor_cookie.cookie.repository.CookieRepository;
@@ -22,16 +23,18 @@ public class CookieService {
 
     @Transactional
     public void assignCookieToUser(Member user, Long cookieId) {
-        Cookie cookie = cookieRepository.findById(cookieId)
-                .orElseThrow(() -> new RuntimeException("Cookie not found"));
-
-        UserCookie userCookie = new UserCookie();
-        userCookie.setUser(user);
-        userCookie.setCookie(cookie);
+        // UserCookie 엔티티를 검색
+        UserCookie userCookie = userCookieRepository.findByUserIdAndCookieId(user.getId(), cookieId)
+                .orElseThrow(() -> new RuntimeException("Cookie not found for user."));
+        // 이미 보유한 쿠키인지 확인
+        if (userCookie.isOwned()) {
+            throw new RuntimeException("User already owns this cookie.");
+        }
+        // 보유 상태 업데이트
         userCookie.setOwned(true);
-        userCookie.setAccumulatedDistance(0.0f);
-
         userCookieRepository.save(userCookie);
+
+        System.out.println("Cookie with ID " + cookieId + " assigned to user: " + user.getEmail());
     }
 
     @Transactional(readOnly = true)
@@ -116,6 +119,22 @@ public class CookieService {
 
             userCookieRepository.save(userCookie);
         }
+    }
+    @Transactional(readOnly = true)
+    public List<UserCookieResponseDto> getUserCookies(Member user) {
+        // 유저의 모든 쿠키 조회
+        List<UserCookie> userCookies = userCookieRepository.findAllByUserId(user.getId());
+
+        // 엔티티를 DTO로 변환
+        return userCookies.stream()
+                .map(userCookie -> UserCookieResponseDto.builder()
+                        .cookieId(userCookie.getCookie().getCookieId())
+                        .cookieName(userCookie.getCookie().getCookieName())
+                        .isOwned(userCookie.isOwned())
+                        .isPurchasable(userCookie.isPurchasable())
+                        .accumulatedDistance(userCookie.getAccumulatedDistance())
+                        .build())
+                .toList();
     }
 
 }

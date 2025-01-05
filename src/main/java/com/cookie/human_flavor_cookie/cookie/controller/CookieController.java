@@ -29,20 +29,10 @@ public class CookieController {
 
 
     @GetMapping("/list")
-    public ResponseEntity<List<UserCookieResponseDto>> getCookiesForUser(@LoginUser Member member) {
-        List<UserCookie> userCookies = cookieService.getCookiesForUser(member.getId());
-
-        // 엔티티를 DTO로 변환
-        List<UserCookieResponseDto> responseDtos = userCookies.stream()
-                .map(userCookie -> UserCookieResponseDto.builder()
-                        .cookieId(userCookie.getCookie().getCookieId())
-                        .cookieName(userCookie.getCookie().getCookieName())
-                        .isOwned(userCookie.isOwned())
-                        .accumulatedDistance(userCookie.getAccumulatedDistance())
-                        .build())
-                .toList();
-
-        return ResponseEntity.ok(responseDtos);
+    public ResponseEntity<List<UserCookieResponseDto>> getUserCookies(@LoginUser Member member) {
+        // 서비스 호출
+        List<UserCookieResponseDto> cookies = cookieService.getUserCookies(member);
+        return ResponseEntity.ok(cookies);
     }
 
 
@@ -53,6 +43,7 @@ public class CookieController {
         cookieService.updateCookieDistance(member.getId(), requestDto.getCookieId(), requestDto.getDistance());
         return ResponseEntity.ok("Cookie distance updated successfully");
     }
+
     @PatchMapping("/change")
     public ResponseEntity<String> changeCurrentCookie(
             @LoginUser Member member,
