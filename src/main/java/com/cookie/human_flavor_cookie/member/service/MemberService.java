@@ -151,15 +151,6 @@ public class MemberService {
             String currentCookieName = "";
             Long currentCookieId = member.getCurrentCookie(); // Long으로 선언
 
-    @Transactional(readOnly = true)
-    public MainPageDto getMainPage(Member member) {
-        return new MainPageDto(member.getName(), member.getCoin());
-            if (currentCookieId != null) { // null 체크
-                currentCookieName = cookieRepository.findById(currentCookieId)
-                        .map(Cookie::getCookieName)
-                        .orElse("");
-            }
-
             // 연속 성공 또는 실패 일수 계산
             int consecutiveDays = member.getSuccess() > 0 ? member.getSuccess() : member.getFail();
             boolean isSuccessStreak = member.getSuccess() > 0;
@@ -176,6 +167,10 @@ public class MemberService {
         }
 
         return ranking;
+    }
+    @Transactional(readOnly = true)
+    public MainPageDto getMainPage(Member member) {
+        return new MainPageDto(member.getName(), member.getCoin());
     }
 }
 

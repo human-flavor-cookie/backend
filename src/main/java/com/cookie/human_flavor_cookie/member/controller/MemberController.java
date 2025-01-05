@@ -56,9 +56,10 @@ public class MemberController {
     }
 
     @GetMapping("/main-page")
-    public ResponseEntity<?> loginMember(@LoginUser Member member){
+    public ResponseEntity<?> loginMember(@LoginUser Member member) {
         MainPageDto dto = memberService.getMainPage(member);
         return ResponseEntity.ok(dto);
+    }
     @GetMapping("/check-email")
     public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestParam String email) {
         boolean isAvailable = memberService.isEmailAvailable(email);
