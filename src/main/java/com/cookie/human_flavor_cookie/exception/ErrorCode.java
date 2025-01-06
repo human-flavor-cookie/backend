@@ -7,8 +7,10 @@ public enum ErrorCode {
     EMAIL_ALREADY_EXISTS("ALREADY EXIST.", HttpStatus.CONFLICT),
     PASSWORD_INCORRECT("PASSWORD INCORRECT.", HttpStatus.UNAUTHORIZED),
     NO_MEMBER("NO EXIST MEMBER.", HttpStatus.BAD_REQUEST),
-    UNAUTHORIZED("NEED LOGIN", HttpStatus.UNAUTHORIZED);
+    UNAUTHORIZED("NEED LOGIN", HttpStatus.UNAUTHORIZED),
 
+    //쿠키 관련
+    NO_MONEY("NO MONEY", HttpStatus.BAD_REQUEST);
     private final String message;
     private final HttpStatus status;
 

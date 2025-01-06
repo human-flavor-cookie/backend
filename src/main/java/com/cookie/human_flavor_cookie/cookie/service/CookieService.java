@@ -6,6 +6,8 @@ import com.cookie.human_flavor_cookie.cookie.entity.Cookie;
 import com.cookie.human_flavor_cookie.cookie.entity.UserCookie;
 import com.cookie.human_flavor_cookie.cookie.repository.CookieRepository;
 import com.cookie.human_flavor_cookie.cookie.repository.UserCookieRepository;
+import com.cookie.human_flavor_cookie.exception.CustomException;
+import com.cookie.human_flavor_cookie.exception.ErrorCode;
 import com.cookie.human_flavor_cookie.member.entity.Member;
 import com.cookie.human_flavor_cookie.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -115,7 +117,7 @@ public class CookieService {
         Cookie cookie = userCookie.getCookie();
         int cookiePrice = cookie.getPrice(); // 쿠키 엔티티에 가격 필드 추가
         if (user.getCoin() < cookiePrice) {
-            throw new RuntimeException("Not enough coins to purchase this cookie.");
+            throw new CustomException(ErrorCode.NO_MONEY);
         }
         // 쿠키 구매 처리
         user.setCoin(user.getCoin() - cookiePrice);
