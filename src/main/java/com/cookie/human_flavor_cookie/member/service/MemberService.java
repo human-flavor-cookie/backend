@@ -185,7 +185,7 @@ public class MemberService {
                 .map(Running::getDistance) // Running이 존재하면 거리 반환
                 .orElse(0.0f);
         double goalDistance = member.getTarget();
-        return new MainPageDto(member.getName(), member.getCoin(), distanceToday, goalDistance);
+        return new MainPageDto(member.getName(), member.getCoin(), distanceToday, goalDistance, member.getCurrentCookie());
     }
     @Transactional(readOnly = true)
     public List<DailyRankingResponseDto> getDailyRanking(Member currentUser) {

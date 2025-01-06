@@ -12,4 +12,5 @@ public class MainPageDto {
     private int coin;
     private double distanceToday;
     private double goalDistance;
+    private Long currentCookieId;
 }
