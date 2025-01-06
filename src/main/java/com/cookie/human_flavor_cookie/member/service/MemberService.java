@@ -159,7 +159,7 @@ public class MemberService {
             ranking.add(RankingResponseDto.builder()
                     .rank(rank)
                     .userName(member.getName())
-                    .currentCookieName(currentCookieName)
+                    .currentCookieId(currentCookieId)
                     .totalDistance(member.getTotalKm())
                     .consecutiveDays(consecutiveDays)
                     .isSuccessStreak(isSuccessStreak)
