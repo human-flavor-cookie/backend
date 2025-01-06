@@ -104,6 +104,7 @@ public class MemberService {
     }
     @Transactional(readOnly = true)
     public UserProfileResponseDto getUserProfile(Member member) {
+        String userName = member.getName();
         // 연속 성공/실패 정보 가져오기
         int consecutiveSuccessDays = member.getSuccess();
         int consecutiveFailDays = member.getFail();
@@ -120,6 +121,7 @@ public class MemberService {
 
         // DTO 생성 및 반환
         return UserProfileResponseDto.builder()
+                .userName(userName)
                 .consecutiveSuccessDays(consecutiveSuccessDays)
                 .consecutiveFailDays(consecutiveFailDays)
                 .dailyGoal(dailyGoal)

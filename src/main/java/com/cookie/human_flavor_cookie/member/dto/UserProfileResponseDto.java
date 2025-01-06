@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class UserProfileResponseDto {
+    private String userName;
     private int consecutiveSuccessDays; // 며칠 연속 성공
     private int consecutiveFailDays;    // 며칠 연속 실패
     private float dailyGoal;            // 일일 목표 (km)
