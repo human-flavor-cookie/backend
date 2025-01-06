@@ -192,30 +192,21 @@ public class MemberService {
         List<Member> members = memberRepository.findAll();
         List<DailyRankingResponseDto> dailyRanking = new ArrayList<>();
         LocalDate today = LocalDate.now();
-        int userRank = 0;
 
-        // 1. 각 멤버별 오늘의 거리 가져오기 및 랭킹 생성
-        for (int i = 0; i < members.size(); i++) {
-            Member member = members.get(i);
-
+        // 1. 각 멤버별 오늘의 거리 가져오기 및 DTO 생성
+        for (Member member : members) {
             // 오늘 달린 거리 가져오기
             float dailyDistance = runningRepository.findByMemberIdAndDate(member.getId(), today)
                     .map(Running::getDistance)
                     .orElse(0f);
 
-            // 랭킹 계산
-            int rank = i + 1;
-            if (member.getId().equals(currentUser.getId())) {
-                userRank = rank;
-            }
-
             // 연속 성공 또는 실패 일수 계산
             int consecutiveDays = member.getSuccess() > 0 ? member.getSuccess() : member.getFail();
             boolean isSuccessStreak = member.getSuccess() > 0;
 
-            // DTO 생성
+            // DTO 생성 (일단 랭킹은 나중에 할당)
             dailyRanking.add(DailyRankingResponseDto.builder()
-                    .dailyRank(rank)
+                    .dailyRank(0) // 초기값은 0
                     .userName(member.getName())
                     .currentCookieId(member.getCurrentCookie())
                     .dailyDistance(dailyDistance)
@@ -227,8 +218,15 @@ public class MemberService {
         // 2. dailyDistance 기준 내림차순 정렬
         dailyRanking.sort((a, b) -> Float.compare(b.getDailyDistance(), a.getDailyDistance()));
 
+        // 3. 정렬된 리스트를 기준으로 랭킹 번호 재할당
+        int rank = 1;
+        for (DailyRankingResponseDto dto : dailyRanking) {
+            dto.setDailyRank(rank++);
+        }
+
         return dailyRanking;
     }
+
 
 }
 

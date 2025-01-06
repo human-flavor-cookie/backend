@@ -2,8 +2,10 @@ package com.cookie.human_flavor_cookie.member.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Builder
 public class DailyRankingResponseDto {
     private int dailyRank;                 // 순위
