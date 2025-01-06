@@ -20,32 +20,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final MemberRepository memberRepository; // MemberRepository 추가
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        String requestURI = request.getRequestURI();
-
-        // /oauth/kakao/callback 및 /oauth2/** 경로는 JWT 필터를 우회
-        if (requestURI.startsWith("/oauth/kakao/callback") || requestURI.startsWith("/oauth2/")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // JWT 검증 로직
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // 헤더에서 토큰 받아오기
         String token = resolveToken(request);
+
+        // 토큰이 유효하다면 유저 정보를 가져와 SecurityContext와 요청 속성에 설정
         if (token != null && jwtTokenProvider.validateToken(token)) {
             String email = jwtTokenProvider.getEmail(token);
 
             // SecurityContext에 인증 객체 저장
             JwtAuthentication authentication = new JwtAuthentication(email);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } else {
+        }
+        else {
             System.err.println("JWT validation failed or token is missing");
         }
 
         System.out.println("Extracted token: " + token);
         filterChain.doFilter(request, response);
     }
-
 
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
