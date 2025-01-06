@@ -53,7 +53,7 @@ public class MemberService {
                 .email(signupDto.getEmail())
                 .name(signupDto.getName())
                 .password(signupDto.getPassword())
-                .target(signupDto.getTarget())
+                .target(1.0f)
                 .currentCookie(1L)
                 .build();
         memberRepository.save(member);
@@ -223,10 +223,7 @@ public class MemberService {
         for (DailyRankingResponseDto dto : dailyRanking) {
             dto.setDailyRank(rank++);
         }
-
         return dailyRanking;
     }
-
-
 }
 
