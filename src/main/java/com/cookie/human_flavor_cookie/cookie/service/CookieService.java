@@ -109,7 +109,6 @@ public class CookieService {
         if (userCookie.isOwned()) {
             throw new RuntimeException("User already owns this cookie.");
         }
-
         if (!userCookie.isPurchasable()) {
             throw new RuntimeException("This cookie is not available for purchase.");
         }
@@ -123,6 +122,7 @@ public class CookieService {
         user.setCoin(user.getCoin() - cookiePrice);
         userCookie.setOwned(true);
         userCookie.setPurchasable(false); // 구매 후 더 이상 구매 불가
+        userCookie.setAlive(true); // 구매 시 부활
         userCookieRepository.save(userCookie);
         memberRepository.save(user);
     }
@@ -179,22 +179,27 @@ public class CookieService {
             System.out.println("No owned cookies to kill.");
             return;
         }
-
         // 랜덤으로 쿠키 선택
         Random random = new Random();
         UserCookie selectedCookie = ownedCookies.get(random.nextInt(ownedCookies.size()));
-
         // 선택된 쿠키를 죽음 상태로 변경
         if(selectedCookie.getId()!=1L) {
             selectedCookie.setAlive(false);
+            selectedCookie.setPurchasable(true);
             userCookieRepository.save(selectedCookie);
             System.out.println("Cookie " + selectedCookie.getCookie().getCookieName() + " has been killed.");
         }
     }
     @Transactional
     public void evaluateFailureAndKillCookie(Member user) {
+        //현재
+        if(user.getCurrentCookie() == 2L) {
+            if (user.getFail() >= 5) {
+                killRandomCookie(user);
+            }
+        }
         // 연속 실패 조건 확인
-        if (user.getFail() >= 3) {
+        else if (user.getFail() >= 3) {
             killRandomCookie(user);
         }
     }

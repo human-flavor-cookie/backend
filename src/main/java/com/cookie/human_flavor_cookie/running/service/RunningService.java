@@ -1,5 +1,6 @@
 package com.cookie.human_flavor_cookie.running.service;
 
+import com.cookie.human_flavor_cookie.cookie.entity.UserCookie;
 import com.cookie.human_flavor_cookie.cookie.repository.UserCookieRepository;
 import com.cookie.human_flavor_cookie.cookie.service.CookieService;
 import com.cookie.human_flavor_cookie.exception.CustomException;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Random;
 
 @RequiredArgsConstructor
 @Service
@@ -66,6 +68,21 @@ public class RunningService {
             running.setGoalMet(true); // 목표 달성 상태 업데이트
             member.setSuccess(member.getSuccess() + 1); // 성공 카운트 증가
             System.out.println("Goal met! Success count incremented.");
+            //천사맛 부활 능력
+            boolean ownedAngelCookie = userCookieRepository.findByUserIdAndCookieId(member.getId(), 4L)
+                    .map(UserCookie::isOwned)
+                    .orElse(false);
+            if(member.getSuccess()%7==0&&ownedAngelCookie){
+                List<UserCookie> deadCookies = userCookieRepository.findAllByUserId(member.getId()).stream()
+                        .filter(UserCookie::isOwned) // 보유 중인 쿠키
+                        .filter(userCookie -> !userCookie.isAlive()) // 죽어 있는 쿠키
+                        .toList();
+                Random random = new Random();
+                UserCookie selectedCookie = deadCookies.get(random.nextInt(deadCookies.size()));
+                selectedCookie.setAlive(true);
+                selectedCookie.setPurchasable(false);
+                userCookieRepository.save(selectedCookie);
+            }
         }
 
         // 변경 사항 저장
@@ -83,14 +100,25 @@ public class RunningService {
         }
         // 구매 가능 쿠키 상태 업데이트
         cookieService.updatePurchasableCookies(member);
-
+        // 버터크림맛쿠키는 보상이 1.2배
+        if(currentCookieId == 5L)
+        {
+            return EndRunResponseDto.builder()
+                    .totalDistance(running.getDistance())
+                    .totalDuration(running.getDuration())
+                    .isGoalMet(running.isGoalMet()) // 목표 달성 여부 전달
+                    .coinsEarned((int)(coinsEarned*1.2))
+                    .build();
+        }
         // DTO 생성 및 반환
-        return EndRunResponseDto.builder()
-                .totalDistance(running.getDistance())
-                .totalDuration(running.getDuration())
-                .isGoalMet(running.isGoalMet()) // 목표 달성 여부 전달
-                .coinsEarned(coinsEarned)
-                .build();
+        else{
+            return EndRunResponseDto.builder()
+                    .totalDistance(running.getDistance())
+                    .totalDuration(running.getDuration())
+                    .isGoalMet(running.isGoalMet()) // 목표 달성 여부 전달
+                    .coinsEarned(coinsEarned)
+                    .build();
+        }
     }
     @Transactional
     public void handleDailyFailures(Member member) {
