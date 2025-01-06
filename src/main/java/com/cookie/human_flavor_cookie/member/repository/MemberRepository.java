@@ -10,7 +10,6 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByEmail(String email);
     boolean existsByEmail(String email);
-
     @Query("SELECT m FROM Member m ORDER BY m.totalKm DESC")
     List<Member> findAllByOrderByTotalKmDesc();
 }

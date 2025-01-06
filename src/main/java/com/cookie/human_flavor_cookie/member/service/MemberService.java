@@ -14,6 +14,9 @@ import com.cookie.human_flavor_cookie.member.dto.ReturnLoginDto;
 import com.cookie.human_flavor_cookie.member.dto.SignupDto;
 import com.cookie.human_flavor_cookie.member.dto.*;
 import com.cookie.human_flavor_cookie.member.repository.MemberRepository;
+
+import com.cookie.human_flavor_cookie.running.entity.Running;
+import com.cookie.human_flavor_cookie.running.repository.RunningRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.cookie.human_flavor_cookie.member.entity.Member;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +37,7 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final CookieRepository cookieRepository;
     private final UserCookieRepository userCookieRepository;
+    private final RunningRepository runningRepository;
     private final CookieService cookieService;
     @Transactional
     public void signup(SignupDto signupDto) throws Exception {
@@ -169,9 +174,15 @@ public class MemberService {
 
         return ranking;
     }
+    //이름, 코인, 오늘 달린 거리, 목표 반환
     @Transactional(readOnly = true)
     public MainPageDto getMainPage(Member member) {
-        return new MainPageDto(member.getName(), member.getCoin());
+        LocalDate today = LocalDate.now();
+        double distanceToday = runningRepository.findByMemberIdAndDate(member.getId(), today)
+                .map(Running::getDistance) // Running이 존재하면 거리 반환
+                .orElse(0.0f);
+        double goalDistance = member.getTarget();
+        return new MainPageDto(member.getName(), member.getCoin(), distanceToday, goalDistance);
     }
 }
 

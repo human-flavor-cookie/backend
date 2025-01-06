@@ -41,3 +41,4 @@ public class Running {
         this.isGoalMet = isGoalMet;
     }
 }
+

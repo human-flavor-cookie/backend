@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 public class MainPageDto {
     private String name;
     private int coin;
+    private double distanceToday;
+    private double goalDistance;
 }
