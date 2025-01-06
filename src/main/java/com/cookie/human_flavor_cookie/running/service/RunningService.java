@@ -67,6 +67,7 @@ public class RunningService {
         if (!running.isGoalMet() && running.getDistance() >= member.getTarget()) {
             running.setGoalMet(true); // 목표 달성 상태 업데이트
             member.setSuccess(member.getSuccess() + 1); // 성공 카운트 증가
+            member.setFail(0);
             System.out.println("Goal met! Success count incremented.");
             //천사맛 부활 능력
             boolean ownedAngelCookie = userCookieRepository.findByUserIdAndCookieId(member.getId(), 4L)
@@ -133,6 +134,7 @@ public class RunningService {
         // 어제 목표를 달성하지 못한 경우 실패 처리
         if (yesterdayRunning == null || !yesterdayRunning.isGoalMet()) {
             member.setFail(member.getFail() + 1); // 실패 카운트 증가
+            member.setSuccess(0);
             System.out.println("Fail incremented for member: " + member.getEmail());
             memberRepository.save(member);
         }
