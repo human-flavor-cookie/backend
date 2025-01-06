@@ -3,6 +3,8 @@ package com.cookie.human_flavor_cookie.running.repository;
 import com.cookie.human_flavor_cookie.member.entity.Member;
 import com.cookie.human_flavor_cookie.running.entity.Running;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;

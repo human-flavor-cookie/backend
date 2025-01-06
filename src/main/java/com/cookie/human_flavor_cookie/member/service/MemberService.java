@@ -27,6 +27,7 @@ import com.cookie.human_flavor_cookie.member.entity.Member;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -186,5 +187,48 @@ public class MemberService {
         double goalDistance = member.getTarget();
         return new MainPageDto(member.getName(), member.getCoin(), distanceToday, goalDistance);
     }
+    @Transactional(readOnly = true)
+    public List<DailyRankingResponseDto> getDailyRanking(Member currentUser) {
+        List<Member> members = memberRepository.findAll();
+        List<DailyRankingResponseDto> dailyRanking = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        int userRank = 0;
+
+        // 1. 각 멤버별 오늘의 거리 가져오기 및 랭킹 생성
+        for (int i = 0; i < members.size(); i++) {
+            Member member = members.get(i);
+
+            // 오늘 달린 거리 가져오기
+            float dailyDistance = runningRepository.findByMemberIdAndDate(member.getId(), today)
+                    .map(Running::getDistance)
+                    .orElse(0f);
+
+            // 랭킹 계산
+            int rank = i + 1;
+            if (member.getId().equals(currentUser.getId())) {
+                userRank = rank;
+            }
+
+            // 연속 성공 또는 실패 일수 계산
+            int consecutiveDays = member.getSuccess() > 0 ? member.getSuccess() : member.getFail();
+            boolean isSuccessStreak = member.getSuccess() > 0;
+
+            // DTO 생성
+            dailyRanking.add(DailyRankingResponseDto.builder()
+                    .dailyRank(rank)
+                    .userName(member.getName())
+                    .currentCookieId(member.getCurrentCookie())
+                    .dailyDistance(dailyDistance)
+                    .consecutiveDays(consecutiveDays)
+                    .isSuccessStreak(isSuccessStreak)
+                    .build());
+        }
+
+        // 2. dailyDistance 기준 내림차순 정렬
+        dailyRanking.sort((a, b) -> Float.compare(b.getDailyDistance(), a.getDailyDistance()));
+
+        return dailyRanking;
+    }
+
 }
 

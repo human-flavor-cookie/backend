@@ -85,4 +85,19 @@ public class MemberController {
 
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/dailyranking")
+    public ResponseEntity<Map<String, Object>> getDailyRanking(@LoginUser Member member) {
+        List<DailyRankingResponseDto> dailyRanking = memberService.getDailyRanking(member);
+
+        // 상위 3명 및 내 랭킹 정보
+        Map<String, Object> response = new HashMap<>();
+        response.put("top3", dailyRanking.stream().limit(3).toList()); // 상위 3명
+        response.put("userRank", dailyRanking.stream()
+                .filter(r -> r.getUserName().equals(member.getName()))
+                .findFirst()
+                .orElse(null)); // 현재 유저의 랭킹 정보
+        response.put("allRanks", dailyRanking); // 전체 랭킹
+
+        return ResponseEntity.ok(response);
+    }
 }
