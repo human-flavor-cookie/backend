@@ -10,7 +10,7 @@ public class SignupDto {
     private String name;
     private String email;
     private String password;
-
+    private float target;
     public void encodingPassword(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);
     }
