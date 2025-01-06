@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,18 +42,21 @@ public class CookieController {
         return ResponseEntity.ok("Cookie distance updated successfully");
     }
     @PatchMapping("/change")
-    public ResponseEntity<String> changeCurrentCookie(
+    public ResponseEntity<?> changeCurrentCookie(
             @LoginUser Member member,
             @RequestBody ChangeCookieRequestDto requestDto) {
         cookieService.changeCurrentCookie(member, requestDto.getCookieId());
-        return ResponseEntity.ok("Cookie changed successfully.");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Cookie changed successfully");
+        return ResponseEntity.ok(response);
     }
     @PostMapping("/purchase")
-    public ResponseEntity<String> purchaseCookie(
+    public ResponseEntity<?> purchaseCookie(
             @LoginUser Member member,
             @RequestBody PurchaseCookieRequestDto requestDto) {
         cookieService.purchaseCookie(member, requestDto.getCookieId());
-        return ResponseEntity.ok("Cookie purchased successfully.");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Cookie purchased successfully.");
+        return ResponseEntity.ok(response);
     }
-
 }
