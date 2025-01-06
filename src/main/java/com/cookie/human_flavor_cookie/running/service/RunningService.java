@@ -108,6 +108,8 @@ public class RunningService {
             System.out.println("Fail incremented for member: " + member.getEmail());
             memberRepository.save(member);
         }
+        // 실패 후 실패 일수 3일이면 랜덤 쿠키 사망
+        cookieService.evaluateFailureAndKillCookie(member);
     }
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정 실행
     public void evaluateDailyFailures() {

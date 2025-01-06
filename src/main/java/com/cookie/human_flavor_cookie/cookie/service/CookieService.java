@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -84,6 +85,7 @@ public class CookieService {
             userCookie.setOwned(false); // 초기값: 보유하지 않음
             userCookie.setPurchasable(false); // 초기값: 구매 불가
             userCookie.setAccumulatedDistance(0.0f);
+            userCookie.setAlive(true);
 
             // 특정 쿠키 조건 설정
             if (cookie.getCookieId() == 1L) {
@@ -148,7 +150,7 @@ public class CookieService {
     public List<UserCookieResponseDto> getUserCookies(Member user) {
         // 유저의 모든 쿠키 조회
         List<UserCookie> userCookies = userCookieRepository.findAllByUserId(user.getId());
-
+        Long currentCookieId = user.getCurrentCookie();
         // 엔티티를 DTO로 변환
         return userCookies.stream()
                 .map(userCookie -> UserCookieResponseDto.builder()
@@ -157,8 +159,41 @@ public class CookieService {
                         .isOwned(userCookie.isOwned())
                         .isPurchasable(userCookie.isPurchasable())
                         .accumulatedDistance(userCookie.getAccumulatedDistance())
+                        .isEquipped(currentCookieId.equals(userCookie.getCookie().getCookieId()))
+                        .cookiePrice(userCookie.getCookie().getPrice())
                         .build())
                 .toList();
     }
+    @Transactional
+    public void killRandomCookie(Member user) {
+        // 보유한 쿠키 목록 가져오기 (isOwned = true, isAlive = true)
+        List<UserCookie> ownedCookies = userCookieRepository.findAllByUserId(user.getId()).stream()
+                .filter(UserCookie::isOwned)
+                .filter(UserCookie::isAlive)
+                .toList();
 
+        // 보유한 쿠키가 없으면 종료
+        if (ownedCookies.isEmpty()) {
+            System.out.println("No owned cookies to kill.");
+            return;
+        }
+
+        // 랜덤으로 쿠키 선택
+        Random random = new Random();
+        UserCookie selectedCookie = ownedCookies.get(random.nextInt(ownedCookies.size()));
+
+        // 선택된 쿠키를 죽음 상태로 변경
+        if(selectedCookie.getId()!=1L) {
+            selectedCookie.setAlive(false);
+            userCookieRepository.save(selectedCookie);
+            System.out.println("Cookie " + selectedCookie.getCookie().getCookieName() + " has been killed.");
+        }
+    }
+    @Transactional
+    public void evaluateFailureAndKillCookie(Member user) {
+        // 연속 실패 조건 확인
+        if (user.getFail() >= 3) {
+            killRandomCookie(user);
+        }
+    }
 }

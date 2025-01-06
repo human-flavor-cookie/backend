@@ -16,4 +16,7 @@ public interface UserCookieRepository extends JpaRepository<UserCookie, Long> {
     @Query("SELECT uc FROM UserCookie uc WHERE uc.user.id = :userId AND uc.cookie.cookieId = :cookieId")
     Optional<UserCookie> findByUserIdAndCookieId(@Param("userId") Long userId, @Param("cookieId") Long cookieId);
 
+    @Query("SELECT uc FROM UserCookie uc WHERE uc.user.id = :userId AND uc.isOwned = true AND uc.isAlive = true")
+    List<UserCookie> findAliveOwnedCookiesByUserId(@Param("userId") Long userId);
+
 }

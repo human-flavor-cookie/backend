@@ -31,5 +31,8 @@ public class UserCookie {
 
     @Column(nullable = false)
     private float accumulatedDistance = 0.0f;
+
+    @Column(nullable = false)
+    private boolean isAlive = true;
 }
 
