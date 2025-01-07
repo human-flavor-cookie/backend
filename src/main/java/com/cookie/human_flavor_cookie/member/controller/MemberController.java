@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.cookie.human_flavor_cookie.member.entity.Member;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,11 +49,13 @@ public class MemberController {
     }
 
     @PostMapping("/update-target")
-    public ResponseEntity<String> updateDailyTarget(
+    public ResponseEntity<?> updateDailyTarget(
             @RequestBody UpdateTargetRequestDto requestDto,
             @LoginUser Member member) { // 요청 속성에서 로그인된 사용자 정보 사용
         memberService.updateDailyTarget(member, requestDto.getNewTarget());
-        return ResponseEntity.ok("Daily target updated successfully.");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Daily target updated successfully.");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/main-page")
