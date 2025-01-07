@@ -1,6 +1,7 @@
 package com.cookie.human_flavor_cookie.member.service;
 
 import com.cookie.human_flavor_cookie.member.dto.CreateFriendRequestDto;
+import com.cookie.human_flavor_cookie.member.dto.PendingRequestDto;
 import com.cookie.human_flavor_cookie.member.entity.FriendRequest;
 import com.cookie.human_flavor_cookie.member.entity.FriendRequestStatus;
 import com.cookie.human_flavor_cookie.member.entity.Member;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -79,5 +81,19 @@ public class FriendRequestService {
         }
 
         friendRequestRepository.save(friendRequest);
+    }
+
+    public List<PendingRequestDto> getPendingRequestsForUser(Long currentUserId) {
+        List<FriendRequest> pendingRequests = friendRequestRepository.findByReceiverIdAndStatus(
+                currentUserId,
+                FriendRequestStatus.PENDING
+        );
+
+        return pendingRequests.stream()
+                .map(fr -> new PendingRequestDto(
+                        fr.getId(),                 // friendRequestId
+                        fr.getRequester().getId()   // requesterId
+                ))
+                .collect(Collectors.toList());
     }
 }
