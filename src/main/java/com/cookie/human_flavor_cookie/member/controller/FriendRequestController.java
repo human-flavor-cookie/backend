@@ -1,7 +1,9 @@
 package com.cookie.human_flavor_cookie.member.controller;
 
+import com.cookie.human_flavor_cookie.auth.LoginUser;
 import com.cookie.human_flavor_cookie.member.dto.CreateFriendRequestDto;
 import com.cookie.human_flavor_cookie.member.dto.RespondFriendRequestDto;
+import com.cookie.human_flavor_cookie.member.entity.Member;
 import com.cookie.human_flavor_cookie.member.service.FriendRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +22,11 @@ public class FriendRequestController {
      */
     @PostMapping
     public ResponseEntity<String> createFriendRequest(
+            @LoginUser Member member,
             @Validated @RequestBody CreateFriendRequestDto dto
     ) {
         // 실제 구현에서는 인증/인가(로그인) 정보를 통해 currentUserId를 가져와야 함
-        Long currentUserId = 1L; // 예시로 1L로 고정
+        Long currentUserId = member.getId(); // 예시로 1L로 고정
 
         friendRequestService.createFriendRequest(dto, currentUserId);
         return ResponseEntity.ok("친구 요청을 전송했습니다.");
@@ -34,11 +37,13 @@ public class FriendRequestController {
      */
     @PatchMapping("/{friendRequestId}")
     public ResponseEntity<String> respondToFriendRequest(
+            @LoginUser Member member,
             @PathVariable Long friendRequestId,
             @Validated @RequestBody RespondFriendRequestDto dto
+
     ) {
         // 실제 구현에서는 로그인한 사용자의 ID를 가져와야 함
-        Long currentUserId = 1L; // 예시
+        Long currentUserId = member.getId(); // 예시
 
         friendRequestService.respondFriendRequest(friendRequestId, currentUserId, dto.getAction());
         return ResponseEntity.ok("친구 요청을 처리했습니다.");
