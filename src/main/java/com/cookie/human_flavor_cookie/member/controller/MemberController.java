@@ -44,7 +44,14 @@ public class MemberController {
         memberService.logout(member);
         return ResponseEntity.ok("로그아웃 완료");
     }
-
+    @RequestMapping("/password")
+    public ResponseEntity<String> updatePassword(
+            @LoginUser Member member, // 현재 로그인된 사용자 정보
+            @RequestBody UpdatePasswordRequestDto requestDto) {
+        memberService.updatePassword(member, requestDto.getNewPassword());
+        return ResponseEntity.ok("Password updated successfully");
+    }
+    
     @GetMapping("/isLogin")
     public ResponseEntity<?> isLogin(@LoginUser Member member){
         return ResponseEntity.ok(member);

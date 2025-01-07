@@ -92,6 +92,19 @@ public class MemberService {
     }
 
     @Transactional
+    public void updatePassword(Member member, String newPassword) {
+
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(newPassword);
+
+        // 비밀번호 업데이트
+        member.setPassword(encodedPassword);
+
+        // 변경 내용 저장
+        memberRepository.save(member);
+    }
+
+    @Transactional
     public void updateDailyTarget(Member member, float newTarget) {
         if (newTarget <= 0) {
             throw new IllegalArgumentException("Target must be greater than 0.");
