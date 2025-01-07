@@ -53,7 +53,7 @@ public class MemberService {
                 .email(signupDto.getEmail())
                 .name(signupDto.getName())
                 .password(signupDto.getPassword())
-                .target(1.0f)
+                .target(0.0f)
                 .currentCookie(1L)
                 .build();
         memberRepository.save(member);
