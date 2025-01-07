@@ -2,6 +2,7 @@ package com.cookie.human_flavor_cookie.member.service;
 
 import com.cookie.human_flavor_cookie.member.dto.CreateFriendRequestDto;
 import com.cookie.human_flavor_cookie.member.dto.PendingRequestDto;
+import com.cookie.human_flavor_cookie.member.dto.RespondFriendRequestDto;
 import com.cookie.human_flavor_cookie.member.entity.FriendRequest;
 import com.cookie.human_flavor_cookie.member.entity.FriendRequestStatus;
 import com.cookie.human_flavor_cookie.member.entity.Member;
@@ -60,24 +61,27 @@ public class FriendRequestService {
     /**
      * 2) 친구 요청 응답 (수락/거절)
      */
-    public void respondFriendRequest(Long friendRequestId, Long currentUserId, String action) {
-        FriendRequest friendRequest = friendRequestRepository.findById(friendRequestId)
+    public void respondFriendRequest(RespondFriendRequestDto dto, Long currentUserId) {
+        FriendRequest friendRequest = friendRequestRepository.findById(dto.getFriendRequestId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 친구 요청입니다."));
-        // 현재 사용자가 수신자인지 검증
+
+        // 현재 사용자가 요청의 수신자인지 확인
         if (!friendRequest.getReceiver().getId().equals(currentUserId)) {
             throw new IllegalArgumentException("해당 요청을 응답할 권한이 없습니다.");
         }
-        // PENDING 상태인지 확인
+
+        // 요청 상태가 PENDING인지 확인
         if (friendRequest.getStatus() != FriendRequestStatus.PENDING) {
             throw new IllegalArgumentException("이미 처리된 요청입니다.");
         }
+
         // 액션에 따라 상태 변경
-        if ("ACCEPT".equalsIgnoreCase(action)) {
+        if ("ACCEPT".equalsIgnoreCase(dto.getAction())) {
             friendRequest.setStatus(FriendRequestStatus.ACCEPTED);
-        } else if ("REJECT".equalsIgnoreCase(action)) {
+        } else if ("REJECT".equalsIgnoreCase(dto.getAction())) {
             friendRequest.setStatus(FriendRequestStatus.REJECTED);
         } else {
-            throw new IllegalArgumentException("올바르지 않은 action 값입니다. (ACCEPT 또는 REJECT)");
+            throw new IllegalArgumentException("유효하지 않은 action 값입니다. (ACCEPT 또는 REJECT)");
         }
 
         friendRequestRepository.save(friendRequest);

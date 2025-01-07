@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,32 +26,34 @@ public class FriendRequestController {
      * 친구 요청 생성
      */
     @PostMapping
-    public ResponseEntity<String> createFriendRequest(
+    public ResponseEntity<?> createFriendRequest(
             @LoginUser Member member,
             @Validated @RequestBody CreateFriendRequestDto dto
     ) {
         Long currentUserId = member.getId();
-
         friendRequestService.createFriendRequest(dto, currentUserId);
-        return ResponseEntity.ok("친구 요청을 전송했습니다.");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "친구 요청을 전송했습니다.");
+        return ResponseEntity.ok(response);
     }
 
     /**
      * 친구 요청 응답 (수락/거절)
      */
-    @PatchMapping("/{friendRequestId}")
-    public ResponseEntity<String> respondToFriendRequest(
+    @PostMapping("/respond")
+    public ResponseEntity<?> respondToFriendRequest(
             @LoginUser Member member,
-            @PathVariable Long friendRequestId,
             @Validated @RequestBody RespondFriendRequestDto dto
-
     ) {
-        // 실제 구현에서는 로그인한 사용자의 ID를 가져와야 함
-        Long currentUserId = member.getId();
+        // 실제로는 SecurityContextHolder, JWT 등을 통해 로그인된 사용자 ID를 가져와야 함
+        Long currentUserId = member.getId(); // 예시로 1L
 
-        friendRequestService.respondFriendRequest(friendRequestId, currentUserId, dto.getAction());
-        return ResponseEntity.ok("친구 요청을 처리했습니다.");
+        friendRequestService.respondFriendRequest(dto, currentUserId);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "친구 요청을 처리했습니다.");
+        return ResponseEntity.ok(response);
     }
+
     @GetMapping("/received-pending")
     public ResponseEntity<List<PendingRequestDto>> getMyPendingRequests(@LoginUser Member member) {
         // 실제로는 SecurityContext/JWT에서 로그인된 유저 ID를 가져와야 함
