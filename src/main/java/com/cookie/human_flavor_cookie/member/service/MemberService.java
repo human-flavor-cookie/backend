@@ -226,25 +226,44 @@ public class MemberService {
         return dailyRanking;
     }
     @Transactional(readOnly = true)
-    public List<TargetRankingResponseDto> getRankingByTier(float minTarget, float maxTarget) {
-        // 해당 티어의 유저 조회
-        List<Member> tierMembers = memberRepository.findMembersByTier(minTarget, maxTarget);
-
-        // 랭킹 계산
-        int rank = 1;
-        List<TargetRankingResponseDto> rankings = new ArrayList<>();
-        for (Member member : tierMembers) {
-            rankings.add(TargetRankingResponseDto.builder()
-                    .rank(rank++)
-                    .memberName(member.getName())
-                    .totalKm(member.getTotalKm())
-                    .successDays(member.getSuccess())
-                    .currentCookieId(member.getCurrentCookie())
-                    .build());
+    public List<TargetRankingResponseDto> getTargetRanking(Member currentUser) {
+        List<Member> members = memberRepository.findAll();
+        List<TargetRankingResponseDto> targetRanking = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        float currentTier = (float) Math.floor(currentUser.getTarget());
+        // 1. 각 멤버별 오늘의 거리 가져오기 및 DTO 생성
+        for (Member member : members) {
+            float memberTier = (float) Math.floor(member.getTarget());
+            if(memberTier==currentTier)
+            {
+                // 오늘 달린 거리 가져오기
+                float dailyDistance = runningRepository.findByMemberIdAndDate(member.getId(), today)
+                        .map(Running::getDistance)
+                        .orElse(0f);
+                // 연속 성공 또는 실패 일수 계산
+                int consecutiveDays = member.getSuccess() > 0 ? member.getSuccess() : member.getFail();
+                boolean isSuccessStreak = member.getSuccess() > 0;
+                // DTO 생성 (일단 랭킹은 나중에 할당)
+                targetRanking.add(TargetRankingResponseDto.builder()
+                        .targetRank(0) // 초기값은 0
+                        .userName(member.getName())
+                        .currentCookieId(member.getCurrentCookie())
+                        .dailyDistance(dailyDistance)
+                        .consecutiveDays(consecutiveDays)
+                        .isSuccessStreak(isSuccessStreak)
+                        .build());
+            }
         }
 
-        return rankings;
-    }
+        // 2. dailyDistance 기준 내림차순 정렬
+        targetRanking.sort((a, b) -> Float.compare(b.getDailyDistance(), a.getDailyDistance()));
 
+        // 3. 정렬된 리스트를 기준으로 랭킹 번호 재할당
+        int rank = 1;
+        for (TargetRankingResponseDto dto : targetRanking) {
+            dto.setTargetRank(rank++);
+        }
+        return targetRanking;
+    }
 }
 

@@ -8,9 +8,10 @@ import lombok.Setter;
 @Setter
 @Builder
 public class TargetRankingResponseDto {
-    private int rank;               // 랭킹
-    private String memberName;      // 유저 이름
-    private float totalKm;          // 누적 달린 거리
-    private int successDays;        // 연속 성공 일수
-    private long currentCookieId; // 장착한 쿠키 이름
+    private int targetRank;               // 랭킹
+    private String userName;      // 유저 이름
+    private Long currentCookieId;
+    private float dailyDistance;      // 총 달린 거리
+    private int consecutiveDays;      // 연속 성공/실패 일수
+    private boolean isSuccessStreak;
 }

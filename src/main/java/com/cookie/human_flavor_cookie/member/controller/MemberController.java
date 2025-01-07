@@ -106,10 +106,18 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
     @GetMapping("/targetranking")
-    public ResponseEntity<List<TargetRankingResponseDto>> getRankingByTier(
-            @RequestParam float minTarget,
-            @RequestParam float maxTarget) {
-        List<TargetRankingResponseDto> rankings = memberService.getRankingByTier(minTarget, maxTarget);
-        return ResponseEntity.ok(rankings);
+    public ResponseEntity<Map<String, Object>> getTargetRanking(@LoginUser Member member) {
+        List<TargetRankingResponseDto> targetRanking = memberService.getTargetRanking(member);
+
+        // 상위 3명 및 내 랭킹 정보
+        Map<String, Object> response = new HashMap<>();
+        response.put("top3", targetRanking.stream().limit(3).toList()); // 상위 3명
+        response.put("userRank", targetRanking.stream()
+                .filter(r -> r.getUserName().equals(member.getName()))
+                .findFirst()
+                .orElse(null)); // 현재 유저의 랭킹 정보
+        response.put("allRanks", targetRanking); // 전체 랭킹
+
+        return ResponseEntity.ok(response);
     }
 }
