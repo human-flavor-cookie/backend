@@ -251,6 +251,7 @@ public class MemberService {
                         .dailyDistance(dailyDistance)
                         .consecutiveDays(consecutiveDays)
                         .isSuccessStreak(isSuccessStreak)
+                        .currentTier(currentTier)
                         .build());
             }
         }

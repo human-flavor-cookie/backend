@@ -14,4 +14,5 @@ public class TargetRankingResponseDto {
     private float dailyDistance;      // 총 달린 거리
     private int consecutiveDays;      // 연속 성공/실패 일수
     private boolean isSuccessStreak;
+    private float currentTier;
 }
