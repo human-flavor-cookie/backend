@@ -163,6 +163,7 @@ public class CookieService {
                         .accumulatedDistance(userCookie.getAccumulatedDistance())
                         .isEquipped(currentCookieId.equals(userCookie.getCookie().getCookieId()))
                         .cookiePrice(userCookie.getCookie().getPrice())
+                        .isAlive(userCookie.isAlive())
                         .build())
                 .toList();
     }
