@@ -10,7 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class CreateFriendRequestDto {
-    @Email
     @NotBlank
     private String receiverEmail;
 }

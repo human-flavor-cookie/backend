@@ -12,4 +12,3 @@ public class RespondFriendRequestDto {
     @NotBlank
     private String action; // "ACCEPT" or "REJECT"
 }
-
