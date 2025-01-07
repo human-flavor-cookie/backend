@@ -3,6 +3,7 @@ package com.cookie.human_flavor_cookie.member.controller;
 import com.cookie.human_flavor_cookie.auth.LoginUser;
 import com.cookie.human_flavor_cookie.member.dto.*;
 import com.cookie.human_flavor_cookie.member.service.MemberService;
+import com.cookie.human_flavor_cookie.running.service.RunningService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class MemberController {
     private final MemberService memberService;
     private final HttpSession httpSession;
+    private final RunningService runningService;
 
     //자체 회원가입
     @PostMapping("/signup")
@@ -102,5 +104,12 @@ public class MemberController {
         response.put("allRanks", dailyRanking); // 전체 랭킹
 
         return ResponseEntity.ok(response);
+    }
+    @GetMapping("/targetranking")
+    public ResponseEntity<List<TargetRankingResponseDto>> getRankingByTier(
+            @RequestParam float minTarget,
+            @RequestParam float maxTarget) {
+        List<TargetRankingResponseDto> rankings = memberService.getRankingByTier(minTarget, maxTarget);
+        return ResponseEntity.ok(rankings);
     }
 }

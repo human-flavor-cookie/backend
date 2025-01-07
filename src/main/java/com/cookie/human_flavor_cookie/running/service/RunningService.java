@@ -151,4 +151,6 @@ public class RunningService {
         }
         System.out.println("Daily failure evaluation completed.");
     }
+
+
 }

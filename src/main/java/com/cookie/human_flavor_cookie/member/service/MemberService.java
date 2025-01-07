@@ -225,5 +225,26 @@ public class MemberService {
         }
         return dailyRanking;
     }
+    @Transactional(readOnly = true)
+    public List<TargetRankingResponseDto> getRankingByTier(float minTarget, float maxTarget) {
+        // 해당 티어의 유저 조회
+        List<Member> tierMembers = memberRepository.findMembersByTier(minTarget, maxTarget);
+
+        // 랭킹 계산
+        int rank = 1;
+        List<TargetRankingResponseDto> rankings = new ArrayList<>();
+        for (Member member : tierMembers) {
+            rankings.add(TargetRankingResponseDto.builder()
+                    .rank(rank++)
+                    .memberName(member.getName())
+                    .totalKm(member.getTotalKm())
+                    .successDays(member.getSuccess())
+                    .currentCookieId(member.getCurrentCookie())
+                    .build());
+        }
+
+        return rankings;
+    }
+
 }
 

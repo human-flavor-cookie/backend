@@ -16,4 +16,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m ORDER BY m.totalKm DESC")
     List<Member> findAllByOrderByTotalKmDesc();
 
+    @Query("SELECT m FROM Member m WHERE m.target >= :minTarget AND m.target < :maxTarget ORDER BY m.totalKm DESC")
+    List<Member> findMembersByTier(@Param("minTarget") float minTarget, @Param("maxTarget") float maxTarget);
+
 }
