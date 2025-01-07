@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.cookie.human_flavor_cookie.member.entity.Member;
-
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +20,6 @@ public class MemberController {
     private final MemberService memberService;
     private final HttpSession httpSession;
     private final RunningService runningService;
-
     //자체 회원가입
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupDto signupDto) throws Exception {
@@ -31,32 +28,30 @@ public class MemberController {
         response.put("message", "회원가입 성공");
         return ResponseEntity.ok(response);
     }
-
     //자체 로그인
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) throws Exception {
         ReturnLoginDto returnDto = memberService.login(loginDto);
         return ResponseEntity.ok(returnDto);
     }
-
     @GetMapping("/logout")
     public ResponseEntity<?> logout(@LoginUser Member member){
         memberService.logout(member);
         return ResponseEntity.ok("로그아웃 완료");
     }
     @RequestMapping("/password")
-    public ResponseEntity<String> updatePassword(
+    public ResponseEntity<?> updatePassword(
             @LoginUser Member member, // 현재 로그인된 사용자 정보
             @RequestBody UpdatePasswordRequestDto requestDto) {
         memberService.updatePassword(member, requestDto.getNewPassword());
-        return ResponseEntity.ok("Password updated successfully");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Password updated successfully");
+        return ResponseEntity.ok(response);
     }
-    
     @GetMapping("/isLogin")
     public ResponseEntity<?> isLogin(@LoginUser Member member){
         return ResponseEntity.ok(member);
     }
-
     @PostMapping("/update-target")
     public ResponseEntity<?> updateDailyTarget(
             @RequestBody UpdateTargetRequestDto requestDto,
@@ -66,7 +61,6 @@ public class MemberController {
         response.put("message", "Daily target updated successfully.");
         return ResponseEntity.ok(response);
     }
-
     @GetMapping("/main-page")
     public ResponseEntity<?> loginMember(@LoginUser Member member) {
         MainPageDto dto = memberService.getMainPage(member);
