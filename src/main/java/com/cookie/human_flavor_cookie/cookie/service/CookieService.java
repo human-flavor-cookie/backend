@@ -185,7 +185,7 @@ public class CookieService {
         Random random = new Random();
         UserCookie selectedCookie = ownedCookies.get(random.nextInt(ownedCookies.size()));
         // 선택된 쿠키를 죽음 상태로 변경
-        if(selectedCookie.getId()!=1L) {
+        if(selectedCookie.getCookie().getCookieId()!=1L) {
             selectedCookie.setAlive(false);
             selectedCookie.setPurchasable(true);
             selectedCookie.setOwned(false);
