@@ -285,6 +285,10 @@ public class MemberService {
         List<Member> friends = memberRepository.findAcceptedFriends(currentUser.getId());
         List<FriendRankingResponseDto> friendRanking = new ArrayList<>();
         LocalDate today = LocalDate.now();
+        if (friends == null) {
+            friends = new ArrayList<>();
+        }
+        friends.add(currentUser);
         // 1. 각 멤버별 오늘의 거리 가져오기 및 DTO 생성
         for (Member member : friends) {
             float dailyDistance = runningRepository.findByMemberIdAndDate(member.getId(), today)
