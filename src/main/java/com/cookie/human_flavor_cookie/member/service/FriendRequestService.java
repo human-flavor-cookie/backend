@@ -77,13 +77,6 @@ public class FriendRequestService {
         if (friendRequest.getStatus() != FriendRequestStatus.PENDING) {
             throw new IllegalArgumentException("이미 처리된 요청입니다.");
         }
-        List<UserCookie> userCookies = userCookieRepository.findAllByUserId(currentUserId);
-        List<Member> friends = memberRepository.findAcceptedFriends(currentUserId);
-
-        UserCookie userCookie = userCookies.stream()
-                .filter(uc -> uc.getCookie().getCookieId() == 2L)
-                .findFirst()
-                .orElse(null);
         // 액션에 따라 상태 변경
         if ("ACCEPT".equalsIgnoreCase(dto.getAction())) {
             friendRequest.setStatus(FriendRequestStatus.ACCEPTED);
@@ -93,10 +86,16 @@ public class FriendRequestService {
             throw new IllegalArgumentException("유효하지 않은 action 값입니다. (ACCEPT 또는 REJECT)");
         }
         friendRequestRepository.save(friendRequest);
+
+        List<UserCookie> userCookies = userCookieRepository.findAllByUserId(currentUserId);
+        List<Member> friends = memberRepository.findAcceptedFriends(currentUserId);
         //친구 수 5명 이상이면 좀비맛 쿠키 해금
-        if(friends.size() >= 5 && !userCookie.isOwned()){
-            userCookie.setPurchasable(true);
-            userCookieRepository.save(userCookie);
+        for (UserCookie userCookie : userCookies) {
+            Cookie cookie = userCookie.getCookie();
+            if (friends.size() >= 5 && cookie.getCookieId() == 2L && !userCookie.isOwned()) {
+                userCookie.setPurchasable(true);
+                userCookieRepository.save(userCookie);
+            }
         }
     }
 
