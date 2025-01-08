@@ -19,4 +19,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m WHERE m.target >= :minTarget AND m.target < :maxTarget ORDER BY m.totalKm DESC")
     List<Member> findMembersByTier(@Param("minTarget") float minTarget, @Param("maxTarget") float maxTarget);
 
+    @Query("SELECT m FROM Member m, FriendRequest fr " +
+            "WHERE fr.status = 'ACCEPTED' " +
+            "AND (fr.requester.id = :userId AND m.id = fr.receiver.id OR " +
+            "fr.receiver.id = :userId AND m.id = fr.requester.id)")
+    List<Member> findAcceptedFriends(@Param("userId") Long userId);
 }

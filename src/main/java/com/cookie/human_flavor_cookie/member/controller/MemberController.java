@@ -121,4 +121,18 @@ public class MemberController {
 
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/friendranking")
+    public ResponseEntity<Map<String, Object>> getFriendRanking(@LoginUser Member member) {
+        List<FriendRankingResponseDto> friendRanking = memberService.getFriendRanking(member);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("top3", friendRanking.stream().limit(3).toList());
+        response.put("userRank", friendRanking.stream()
+                .filter(r -> r.getUserName().equals(member.getName()))
+                .findFirst()
+                .orElse(null));
+        response.put("allRanks", friendRanking);
+
+        return ResponseEntity.ok(response);
+    }
 }

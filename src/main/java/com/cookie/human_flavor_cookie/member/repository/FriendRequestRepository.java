@@ -3,6 +3,9 @@ package com.cookie.human_flavor_cookie.member.repository;
 import com.cookie.human_flavor_cookie.member.entity.FriendRequest;
 import com.cookie.human_flavor_cookie.member.entity.FriendRequestStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 
 public interface FriendRequestRepository extends JpaRepository<FriendRequest, Long> {
