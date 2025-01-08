@@ -141,7 +141,7 @@ public class RunningService {
         // 실패 후 실패 일수 3일이면 랜덤 쿠키 사망
         cookieService.evaluateFailureAndKillCookie(member);
     }
-    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정 실행
+    @Scheduled(cron = "0 0 18 * * ?") // 매일 자정 실행
     public void evaluateDailyFailures() {
         System.out.println("Starting daily failure evaluation...");
 
