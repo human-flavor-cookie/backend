@@ -131,10 +131,11 @@ public class CookieService {
         List<UserCookie> userCookies = userCookieRepository.findAllByUserId(user.getId());
         for (UserCookie userCookie : userCookies) {
             Cookie cookie = userCookie.getCookie();
+            /*
             //좀비맛쿠키: 1시간 뛰면 구매 가능
             if (user.getTotalTime() >= 3600 && cookie.getCookieId() == 2L && !userCookie.isOwned()) {
                 userCookie.setPurchasable(true);
-            }
+            }*/
             //명랑한쿠키: 조건 없이 구매 가능
             if (cookie.getCookieId() == 3L && !userCookie.isOwned()) userCookie.setPurchasable(true);
             //천사맛쿠키: 7일 연속 성공시 구매 가능

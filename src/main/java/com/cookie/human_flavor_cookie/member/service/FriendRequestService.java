@@ -1,5 +1,8 @@
 package com.cookie.human_flavor_cookie.member.service;
 
+import com.cookie.human_flavor_cookie.cookie.entity.Cookie;
+import com.cookie.human_flavor_cookie.cookie.entity.UserCookie;
+import com.cookie.human_flavor_cookie.cookie.repository.UserCookieRepository;
 import com.cookie.human_flavor_cookie.member.dto.CreateFriendRequestDto;
 import com.cookie.human_flavor_cookie.member.dto.PendingRequestDto;
 import com.cookie.human_flavor_cookie.member.dto.RespondFriendRequestDto;
@@ -22,7 +25,7 @@ public class FriendRequestService {
 
     private final MemberRepository memberRepository;
     private final FriendRequestRepository friendRequestRepository;
-
+    private final UserCookieRepository userCookieRepository;
     /**
      * 1) 친구 요청 생성
      * - 중복 요청 방지 (이미 PENDING/ACCEPTED 상태 있으면 X)
@@ -74,7 +77,13 @@ public class FriendRequestService {
         if (friendRequest.getStatus() != FriendRequestStatus.PENDING) {
             throw new IllegalArgumentException("이미 처리된 요청입니다.");
         }
+        List<UserCookie> userCookies = userCookieRepository.findAllByUserId(currentUserId);
+        List<Member> friends = memberRepository.findAcceptedFriends(currentUserId);
 
+        UserCookie userCookie = userCookies.stream()
+                .filter(uc -> uc.getCookie().getCookieId() == 2L)
+                .findFirst()
+                .orElse(null);
         // 액션에 따라 상태 변경
         if ("ACCEPT".equalsIgnoreCase(dto.getAction())) {
             friendRequest.setStatus(FriendRequestStatus.ACCEPTED);
@@ -83,8 +92,12 @@ public class FriendRequestService {
         } else {
             throw new IllegalArgumentException("유효하지 않은 action 값입니다. (ACCEPT 또는 REJECT)");
         }
-
         friendRequestRepository.save(friendRequest);
+        //친구 수 5명 이상이면 좀비맛 쿠키 해금
+        if(friends.size() >= 5 && !userCookie.isOwned()){
+            userCookie.setPurchasable(true);
+            userCookieRepository.save(userCookie);
+        }
     }
 
     public List<PendingRequestDto> getPendingRequestsForUser(Long currentUserId) {
