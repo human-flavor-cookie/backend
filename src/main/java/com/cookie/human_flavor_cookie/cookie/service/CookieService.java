@@ -188,6 +188,7 @@ public class CookieService {
         if(selectedCookie.getId()!=1L) {
             selectedCookie.setAlive(false);
             selectedCookie.setPurchasable(true);
+            selectedCookie.setOwned(false);
             userCookieRepository.save(selectedCookie);
             System.out.println("Cookie " + selectedCookie.getCookie().getCookieName() + " has been killed.");
         }
