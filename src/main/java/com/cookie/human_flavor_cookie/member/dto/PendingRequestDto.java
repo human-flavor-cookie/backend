@@ -8,4 +8,6 @@ import lombok.Data;
 public class PendingRequestDto {
     private Long friendRequestId;
     private Long requesterId;
+    private String requesterName;
+    private String requesterEmail;
 }

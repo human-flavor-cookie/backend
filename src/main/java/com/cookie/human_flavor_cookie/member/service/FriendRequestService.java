@@ -96,7 +96,9 @@ public class FriendRequestService {
         return pendingRequests.stream()
                 .map(fr -> new PendingRequestDto(
                         fr.getId(),                 // friendRequestId
-                        fr.getRequester().getId()   // requesterId
+                        fr.getRequester().getId(),
+                        fr.getRequester().getName(),
+                        fr.getRequester().getEmail()// requesterId
                 ))
                 .collect(Collectors.toList());
     }
