@@ -13,4 +13,5 @@ public class MainPageDto {
     private double distanceToday;
     private double goalDistance;
     private Long currentCookieId;
+    private int pendingCount;
 }

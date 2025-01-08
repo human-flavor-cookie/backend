@@ -13,6 +13,9 @@ import com.cookie.human_flavor_cookie.member.dto.MainPageDto;
 import com.cookie.human_flavor_cookie.member.dto.ReturnLoginDto;
 import com.cookie.human_flavor_cookie.member.dto.SignupDto;
 import com.cookie.human_flavor_cookie.member.dto.*;
+import com.cookie.human_flavor_cookie.member.entity.FriendRequest;
+import com.cookie.human_flavor_cookie.member.entity.FriendRequestStatus;
+import com.cookie.human_flavor_cookie.member.repository.FriendRequestRepository;
 import com.cookie.human_flavor_cookie.member.repository.MemberRepository;
 
 import com.cookie.human_flavor_cookie.running.entity.Running;
@@ -40,6 +43,7 @@ public class MemberService {
     private final UserCookieRepository userCookieRepository;
     private final RunningRepository runningRepository;
     private final CookieService cookieService;
+    private final FriendRequestRepository friendRequestRepository;
     @Transactional
     public void signup(SignupDto signupDto) throws Exception {
         //이미 회원이 존재하는 경우
@@ -198,7 +202,8 @@ public class MemberService {
                 .map(Running::getDistance) // Running이 존재하면 거리 반환
                 .orElse(0.0f);
         double goalDistance = member.getTarget();
-        return new MainPageDto(member.getName(), member.getCoin(), distanceToday, goalDistance, member.getCurrentCookie());
+        List<FriendRequest> pendingRequests = friendRequestRepository.findByReceiverIdAndStatus(member.getId(), FriendRequestStatus.PENDING);
+        return new MainPageDto(member.getName(), member.getCoin(), distanceToday, goalDistance, member.getCurrentCookie(), pendingRequests.size());
     }
     @Transactional(readOnly = true)
     public List<DailyRankingResponseDto> getDailyRanking(Member currentUser) {
