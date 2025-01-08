@@ -193,7 +193,7 @@ public class CookieService {
             System.out.println("Cookie " + selectedCookie.getCookie().getCookieName() + " has been killed.");
         }
         //장착중인 쿠키가 죽으면 용감한맛 쿠키 장착
-        if(selectedCookie.getId()==user.getCurrentCookie()) changeCurrentCookie(user, 1L);
+        if(selectedCookie.getCookie().getCookieId()==user.getCurrentCookie()) changeCurrentCookie(user, 1L);
     }
     @Transactional
     public void evaluateFailureAndKillCookie(Member user) {
