@@ -9,9 +9,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
   datasource:
-    url: jdbc:mysql://172.10.7.47/human_flavor_cookie
-    username: root
-    password: 223819
+    url: jdbc:mysql://human-flavor-cookie-database.cbucsc06webs.us-east-1.rds.amazonaws.com:3306/human-flavor-cookie-database
+    username: admin
+    password: 223819ko
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
